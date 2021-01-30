@@ -17,23 +17,19 @@ variables:
 
 steps:
 - task: DotNetCoreCLI@2
+  displayName: Restore
   inputs:
     command: 'restore'
     projects: '$(solution)'
     feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: '"$(solution)"'
-    configuration: Release
-
-- task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
     command: 'publish'
-    publishWebProjects: true
-    arguments: '-p:SkipInvalidConfigurations=true -o "$(build.artifactStagingDirectory)\EE579.Api.zip"'
-    modifyOutputPath: false
+    publishWebProjects: false
+    projects: '**/EE579.Api.csproj'
+    arguments: '-c $(buildConfiguration)  -o "$(build.artifactStagingDirectory)/EE579.Api.zip"'
 
 - task: PublishBuildArtifacts@1
   inputs:
