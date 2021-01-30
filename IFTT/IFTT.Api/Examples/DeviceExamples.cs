@@ -49,7 +49,6 @@ namespace IFTT.Api.Examples
         {
             return new DeviceRegistrationDto
             {
-                MqttUsername = "IFTT-Iot-Hub.azure-devices.net/00:0a:95:9d:68:16/?api-version=2018-06-30",
                 MqttPassword = "SharedAccessSignature sr=IFTTT-Iot-Hub.azure-devices.net%2Fdevices%2F00%3A0a%3A95%3A9d%3A68%3A16&sig=P5ZwP6DSCBjclOl2IFEb6AkAcczdT7w1Nn8MoGBtZn0%3D&se=36324632293"
             };
         }
