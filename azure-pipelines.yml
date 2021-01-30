@@ -25,6 +25,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
+    projects: '**/EE579.Api.csproj'
     publishWebProjects: true
     arguments: '-o "$(build.artifactStagingDirectory)\EE579.zip"'
 
