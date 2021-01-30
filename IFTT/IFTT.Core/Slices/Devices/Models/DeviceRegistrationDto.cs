@@ -2,7 +2,6 @@
 {
     public class DeviceRegistrationDto
     {
-        public string MqttUsername { get; set; }
         public string MqttPassword { get; set; }
     }
 }
