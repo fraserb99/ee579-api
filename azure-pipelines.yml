@@ -11,7 +11,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  solution: '**/**.sln'
+  solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -24,10 +24,16 @@ steps:
 
 - task: DotNetCoreCLI@2
   inputs:
+    command: 'build'
+    projects: '"**/EE579.Api.csproj"'
+    configuration: Release
+
+- task: DotNetCoreCLI@2
+  inputs:
     command: 'publish'
-    projects: '**/EE579.Api.csproj'
     publishWebProjects: true
-    arguments: '-o "$(build.artifactStagingDirectory)\EE579.zip"'
+    arguments: '-p:SkipInvalidConfigurations=true -o "$(build.artifactStagingDirectory)\EE579.Api.zip"'
+    modifyOutputPath: false
 
 - task: PublishBuildArtifacts@1
   inputs:
