@@ -25,7 +25,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
-    projects: '"**/EE579.Api.csproj"'
+    projects: '"$(solution)"'
     configuration: Release
 
 - task: DotNetCoreCLI@2
