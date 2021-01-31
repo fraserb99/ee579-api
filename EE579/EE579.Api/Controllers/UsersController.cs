@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Core.Slices.Users.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EE579.Api.Controllers
 {
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
@@ -17,6 +20,7 @@ namespace EE579.Api.Controllers
         /// Allows a user to create an account
         /// </remarks>
         [ProducesResponseType(typeof(SessionDto), StatusCodes.Status200OK)]
+        [AllowAnonymous]
         [HttpPost]
         [Route("create")]
         public SessionDto Create([FromBody] CreateUserInput input)

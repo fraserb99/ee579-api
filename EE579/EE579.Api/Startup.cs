@@ -14,7 +14,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using EE579.Api.Infrastructure.Swagger;
 using EE579.Core.Slices.Auth.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -42,6 +44,18 @@ namespace EE579.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EE579.Api", Version = "v1" });
+
+                c.OperationFilter<AuthorizationOperationFilter>();
+
+                c.AddSecurityDefinition("Bearer",
+                    new OpenApiSecurityScheme()
+                    {
+                        In = ParameterLocation.Header,
+                        Description = "Enter a JWT to authorize - in the form 'Bearer {JWT}'",
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.Http,
+                        Scheme = JwtBearerDefaults.AuthenticationScheme
+                    });
 
                 c.ExampleFilters();
 

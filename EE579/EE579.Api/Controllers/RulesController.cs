@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using EE579.Core.Models;
 using EE579.Core.Slices.Rules.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EE579.Api.Controllers
 {
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     public class RulesController : ControllerBase
     {

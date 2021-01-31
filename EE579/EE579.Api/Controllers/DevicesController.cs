@@ -30,9 +30,11 @@ namespace EE579.Api.Controllers
         }
 
         /// <remarks>
-        /// The first request a device should send when powered on for the first time and connected to a network. The device will be added to the system and given an access key to allow it to connect to the mqtt broker
+        /// The first request a device should send when powered on for the first time and connected to a network.
+        /// The device will be added to the system and given an access key to allow it to connect to the mqtt broker
         /// </remarks>
         [ProducesResponseType(typeof(DeviceRegistrationDto), StatusCodes.Status200OK)]
+        [AllowAnonymous]
         [HttpPost]
         [Route("register")]
         public DeviceRegistrationDto Create([FromBody] RegisterDeviceInput input)
