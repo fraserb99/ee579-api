@@ -2,7 +2,7 @@
 {
     public enum DeviceState
     {
-        New,
+        Unclaimed,
         Claimed,
     }
 }

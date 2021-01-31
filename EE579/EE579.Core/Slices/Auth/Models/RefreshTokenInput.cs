@@ -1,7 +1,14 @@
-﻿namespace EE579.Core.Slices.Auth.Models
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace EE579.Core.Slices.Auth.Models
 {
     public class RefreshTokenInput
     {
-        public string RefreshToken { get; set; }
+        /// <summary>
+        /// The refresh token to be used to refresh a user's session when expired
+        /// </summary>
+        [Required]
+        public Guid RefreshToken { get; set; }
     }
 }

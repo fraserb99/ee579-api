@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using EE579.Core.Slices.Auth.Models;
+using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace EE579.Api
@@ -84,6 +85,7 @@ namespace EE579.Api
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.Map("/", context => context.Response.WriteAsync("EE579 Api"));
                 endpoints.MapControllers();
             });
         }

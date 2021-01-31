@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EE579.Core.Models;
 using EE579.Core.Slices.Tenants.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [ProducesResponseType(typeof(List<TenantDto>), StatusCodes.Status200OK)]
         [HttpGet]
-        public List<TenantDto> Get()
+        public ApiList<TenantDto> Get()
         {
             throw new NotImplementedException();
         }

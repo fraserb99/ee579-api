@@ -21,7 +21,7 @@ namespace EE579.Api.Controllers
     public class DevicesController
     {
         /// <remarks>
-        /// Gets a list of devices belonging to the current client
+        /// Gets a list of devices belonging to the current tenant
         /// </remarks>
         [HttpGet]
         public ApiList<DeviceDto> Get()
@@ -46,7 +46,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(List<DeviceDto>), StatusCodes.Status200OK)]
         [HttpGet]
         [Route("unclaimed")]
-        public List<DeviceDto> GetUnclaimed()
+        public ApiList<DeviceDto> GetUnclaimed()
         {
             throw new NotImplementedException();
         }

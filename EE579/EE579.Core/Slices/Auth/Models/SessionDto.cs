@@ -1,4 +1,5 @@
-﻿using EE579.Core.Slices.Users.Models;
+﻿using System;
+using EE579.Core.Slices.Users.Models;
 
 namespace EE579.Core.Slices.Auth.Models
 {
@@ -6,5 +7,6 @@ namespace EE579.Core.Slices.Auth.Models
     {
         public UserDto User { get; set; }
         public string Token { get; set; }
+        public Guid RefreshToken { get; set; }
     }
 }
