@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EE579.Api.Examples;
+using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Core.Slices.Devices.Models;
@@ -15,6 +16,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace EE579.Api.Controllers
 {
+    [RequiresTenant]
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]

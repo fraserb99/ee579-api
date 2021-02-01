@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
 using EE579.Core.Slices.DeviceGroups.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EE579.Api.Controllers
 {
+    [RequiresTenant]
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]

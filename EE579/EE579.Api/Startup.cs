@@ -46,6 +46,7 @@ namespace EE579.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EE579.Api", Version = "v1" });
 
                 c.OperationFilter<AuthorizationOperationFilter>();
+                c.OperationFilter<TenantHeaderOperationFilter>();
 
                 c.AddSecurityDefinition("Bearer",
                     new OpenApiSecurityScheme()
