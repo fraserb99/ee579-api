@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EE579.Api", "EE579.Api\EE57
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EE579.Core", "EE579.Core\EE579.Core.csproj", "{22214315-72BF-462A-A3E5-F903CA539C90}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EE579.Domain", "EE579.Domain\EE579.Domain.csproj", "{D5F2B026-AE39-4BC8-AFCE-1A7E84620360}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{22214315-72BF-462A-A3E5-F903CA539C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22214315-72BF-462A-A3E5-F903CA539C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22214315-72BF-462A-A3E5-F903CA539C90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5F2B026-AE39-4BC8-AFCE-1A7E84620360}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F2B026-AE39-4BC8-AFCE-1A7E84620360}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F2B026-AE39-4BC8-AFCE-1A7E84620360}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F2B026-AE39-4BC8-AFCE-1A7E84620360}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

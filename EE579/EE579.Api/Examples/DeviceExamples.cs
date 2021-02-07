@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using EE579.Core.Models;
 using EE579.Core.Slices.Devices.Models;
+using EE579.Domain.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace EE579.Api.Examples

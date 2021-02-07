@@ -1,4 +1,4 @@
-﻿namespace EE579.Core.Slices.Devices.Models
+﻿namespace EE579.Domain.Models
 {
     public enum DeviceState
     {

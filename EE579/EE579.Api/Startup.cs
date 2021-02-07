@@ -16,8 +16,10 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using EE579.Api.Infrastructure.Swagger;
 using EE579.Core.Slices.Auth.Models;
+using EE579.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace EE579.Api
@@ -34,7 +36,7 @@ namespace EE579.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            ConfigureEfCore(services);
             services.AddControllers()
                 .AddJsonOptions(opts =>
                 {
@@ -80,6 +82,13 @@ namespace EE579.Api
             });
 
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
+        }
+
+        private void ConfigureEfCore(IServiceCollection services)
+        {
+            services.AddDbContext<DatabaseContext>(opts =>
+                opts.UseLazyLoadingProxies()
+                    .UseSqlServer(Configuration.GetConnectionString("Default")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

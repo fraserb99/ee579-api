@@ -2,8 +2,9 @@
 {
     public enum OutputType
     {
-        LED1,
-        LED2,
+        Led1,
+        Led2,
+        Led3,
         Buzzer,
     }
 }

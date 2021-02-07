@@ -33,7 +33,7 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [ProducesResponseType(typeof(RuleDto), StatusCodes.Status200OK)]
         [HttpPost]
-        public RuleDto Create([FromBody] RuleInput input)
+        public RuleDto Create([FromBody] RuleInputDto input)
         {
             throw new NotImplementedException();
         }
@@ -44,7 +44,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(RuleDto), StatusCodes.Status200OK)]
         [HttpPut]
         [Route("{deviceId}")]
-        public RuleDto Update(string deviceId, [FromBody] RuleInput input)
+        public RuleDto Update(string deviceId, [FromBody] RuleInputDto input)
         {
             throw new NotImplementedException();
         }

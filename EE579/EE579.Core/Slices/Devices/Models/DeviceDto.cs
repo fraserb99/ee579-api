@@ -1,4 +1,5 @@
 ﻿using System;
+using EE579.Domain.Models;
 
 namespace EE579.Core.Slices.Devices.Models
 {

@@ -12,6 +12,10 @@
     <Folder Include="Slices\Examples\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EE579.Domain\EE579.Domain.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
