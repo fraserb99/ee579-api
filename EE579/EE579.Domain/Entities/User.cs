@@ -12,6 +12,9 @@ namespace EE579.Domain.Entities
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
+        [Required]
+        public string Name { get; set; }
+        public Guid RefreshToken { get; set; }
 
         [InverseProperty("Owner")]
         public virtual ICollection<Tenant> OwnedTenants { get; set; }

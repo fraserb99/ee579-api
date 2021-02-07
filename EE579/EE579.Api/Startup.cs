@@ -87,6 +87,8 @@ namespace EE579.Api
 
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
 
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthService, AuthService>();
         }
