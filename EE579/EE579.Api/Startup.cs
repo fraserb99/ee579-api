@@ -21,6 +21,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Filters;
+using EE579.Core.Slices.Users;
+using EE579.Core.Slices.Users.Impl;
+using EE579.Core.Slices.Auth;
+using EE579.Core.Slices.Auth.Impl;
 
 namespace EE579.Api
 {
@@ -82,6 +86,9 @@ namespace EE579.Api
             });
 
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
+
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IAuthService, AuthService>();
         }
 
         private void ConfigureEfCore(IServiceCollection services)

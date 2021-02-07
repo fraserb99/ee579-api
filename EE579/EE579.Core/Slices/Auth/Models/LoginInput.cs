@@ -5,7 +5,7 @@ namespace EE579.Core.Slices.Auth.Models
     public class LoginInput
     {
         [Required]
-        public string Username { get; set; }
+        public string Email { get; set; }
         [Required]
         public string Password { get; set; }
     }
