@@ -1,4 +1,6 @@
-﻿using EE579.Core.Slices.Auth.Models;
+﻿using AutoMapper;
+using EE579.Core.Slices.Auth.Models;
+using EE579.Core.Slices.Users.Models;
 using EE579.Domain;
 using EE579.Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +17,12 @@ namespace EE579.Core.Slices.Auth.Impl
     {
 
         private readonly DatabaseContext _context;
+        private readonly IMapper _mapper;
 
-        public AuthService(DatabaseContext context)
+        public AuthService(DatabaseContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public string CreateToken(User user)
@@ -41,11 +45,22 @@ namespace EE579.Core.Slices.Auth.Impl
         public SessionDto Login(LoginInput input)
         {
             var user = _context.Users.FirstOrDefault(x => x.Email == input.Email);
-            if (user == null)
-                throw new Exception();
+            if (user == null) throw new Exception();
 
+            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password)) throw new Exception();
 
-            throw new NotImplementedException();
+            user.RefreshToken = new Guid();
+            _context.SaveChanges();
+
+            var userDto = _mapper.Map<UserDto>(user);
+
+            var session = new SessionDto { 
+                User = userDto,
+                Token = CreateToken(user),
+                RefreshToken = user.RefreshToken
+            };
+
+            return session;
         }
 
         public SessionDto RefreshToken(RefreshTokenInput input)
