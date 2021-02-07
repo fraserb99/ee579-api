@@ -10,6 +10,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using EE579.Core.Infrastructure.Exceptions;
+using EE579.Core.Infrastructure.Exceptions.Models;
 
 namespace EE579.Core.Slices.Auth.Impl
 {
@@ -47,7 +49,12 @@ namespace EE579.Core.Slices.Auth.Impl
             var user = _context.Users.FirstOrDefault(x => x.Email == input.Email);
             if (user == null) throw new Exception();
 
-            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password)) throw new Exception();
+            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password)) 
+                throw new FormErrorException(new List<FieldError>
+                {
+                    new FieldError("email", "Invalid email or password"),
+                    new FieldError("password", "Invalid email or password"),
+                });
 
             user.RefreshToken = Guid.NewGuid();
             _context.SaveChanges();

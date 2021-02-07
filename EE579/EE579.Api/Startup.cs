@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using EE579.Api.Infrastructure.Middleware;
 using EE579.Api.Infrastructure.Swagger;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Domain;
@@ -42,8 +43,11 @@ namespace EE579.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             ConfigureEfCore(services);
-            services.AddControllers()
+            services.AddControllers(opts => 
+                    opts.Filters.Add(new HttpStatusCodeExceptionFilter()
+                ))
                 .AddJsonOptions(opts =>
                 {
                     opts.JsonSerializerOptions
