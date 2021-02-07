@@ -11,6 +11,7 @@ namespace EE579.Domain.Entities
         public string Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public string IpAddress { get; set; }
         [Required]
         public virtual Tenant Tenant { get; set; }
         [Required]
