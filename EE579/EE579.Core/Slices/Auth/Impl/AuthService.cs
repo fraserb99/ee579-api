@@ -28,7 +28,7 @@ namespace EE579.Core.Slices.Auth.Impl
         public string CreateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("ee579secret");
+            var key = Encoding.ASCII.GetBytes("zFXaqM10Dw55jz9SZla3EHl1jhcseBSClXhE0A2Q35HtXzTfGHQiNAqOB4MOOWb");
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -49,7 +49,7 @@ namespace EE579.Core.Slices.Auth.Impl
 
             if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password)) throw new Exception();
 
-            user.RefreshToken = new Guid();
+            user.RefreshToken = Guid.NewGuid();
             _context.SaveChanges();
 
             var userDto = _mapper.Map<UserDto>(user);

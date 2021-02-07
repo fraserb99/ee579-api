@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using EE579.Api.Infrastructure.Swagger;
@@ -25,6 +26,7 @@ using EE579.Core.Slices.Users;
 using EE579.Core.Slices.Users.Impl;
 using EE579.Core.Slices.Auth;
 using EE579.Core.Slices.Auth.Impl;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EE579.Api
 {
@@ -85,9 +87,11 @@ namespace EE579.Api
                 
             });
 
+            ConfigureAuth(services);
+
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthService, AuthService>();
@@ -100,6 +104,47 @@ namespace EE579.Api
                     .UseSqlServer(Configuration.GetConnectionString("Default")));
         }
 
+        private void ConfigureAuth(IServiceCollection services)
+        {
+            var key = Encoding.ASCII.GetBytes("zFXaqM10Dw55jz9SZla3EHl1jhcseBSClXhE0A2Q35HtXzTfGHQiNAqOB4MOOWb");
+            services.AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = context =>
+                        {
+                            var db = context.HttpContext.RequestServices.GetRequiredService<DatabaseContext>();
+                            var userId = new Guid(context.Principal.Identity.Name);
+
+                            var user = db.Users.Find(userId);
+                            if (user == null)
+                            {
+                                // return unauthorized if user no longer exists
+                                context.Fail("Unauthorized");
+                            }
+
+
+                            return Task.CompletedTask;
+                        }
+
+                    };
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -109,6 +154,8 @@ namespace EE579.Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EE579.Api v1"));
             }
+
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             app.UseHttpsRedirection();
 

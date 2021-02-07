@@ -4,6 +4,7 @@ using EE579.Core.Slices.Users.Models;
 using EE579.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace EE579.Core.Slices.Users.Mapping
@@ -14,7 +15,8 @@ namespace EE579.Core.Slices.Users.Mapping
         {
             CreateMap<CreateUserInput, User>()
                 .ForMember(x => x.Password, opts => opts.MapFrom(y => BCrypt.Net.BCrypt.HashPassword(y.Password)));
-            CreateMap<User, UserDto>();
+            CreateMap<User, UserDto>()
+                .ForMember(x => x.Tenants, opts => opts.MapFrom(y => y.OwnedTenants.Concat(y.Tenants)));
             CreateMap<Tenant, TenantDto>()
                 .ForMember(x => x.OwnerId, opts => opts.MapFrom(y => y.Owner));
                 

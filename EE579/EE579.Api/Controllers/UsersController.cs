@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Slices.Auth.Models;
+using EE579.Core.Slices.Users;
 using EE579.Core.Slices.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +19,12 @@ namespace EE579.Api.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private readonly IUserService _userService;
+
+        public UsersController(IUserService userService)
+        {
+            _userService = userService;
+        }
         /// <remarks>
         /// Allows a user to create an account
         /// </remarks>
@@ -27,7 +34,9 @@ namespace EE579.Api.Controllers
         [Route("create")]
         public SessionDto Create([FromBody] CreateUserInput input)
         {
-            throw new NotImplementedException();
+            var sessionDto = _userService.Create(input);
+
+            return sessionDto;
         }
 
         /// <remarks>

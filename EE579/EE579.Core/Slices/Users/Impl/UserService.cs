@@ -35,9 +35,11 @@ namespace EE579.Core.Slices.Users.Impl
             if (!match.Success) throw new Exception();
 
             var user = _mapper.Map<User>(input);
-            user.OwnedTenants.Add(new Tenant {
-                Name = user.Name
-            });
+            user.OwnedTenants = new List<Tenant> {
+                new Tenant {
+                    Name = $"{user.Name}'s Tenant" 
+                }
+            };
 
 
             user.RefreshToken = Guid.NewGuid();
