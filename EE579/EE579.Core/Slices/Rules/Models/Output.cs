@@ -1,4 +1,6 @@
-﻿namespace EE579.Core.Slices.Rules.Models
+﻿using EE579.Domain.Models;
+
+namespace EE579.Core.Slices.Rules.Models
 {
     public class Output
     {

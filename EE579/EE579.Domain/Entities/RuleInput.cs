@@ -8,10 +8,14 @@ namespace EE579.Domain.Entities
 {
     public class RuleInput : Entity
     {
+        public RuleInput(InputType type)
+        {
+            Type = type;
+        }
+
         [Required]
         public virtual Device Device { get; set; }
         [Required]
         public InputType Type { get; set; }
-        public string Params { get; set; }
     }
 }

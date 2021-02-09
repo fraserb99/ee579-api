@@ -33,9 +33,12 @@ namespace EE579.Api.Controllers
 
         /// <remarks>
         /// The first request a device should send when powered on for the first time and connected to a network.
-        /// The device will be added to the system and given an access key to allow it to connect to the mqtt broker
+        /// The device will be added to the system and given an access key to allow it to connect to the mqtt broker. 
+        /// If a device has already been added this endpoint will still work, returning a 200 OK instead of 201 Created.
+        /// This is to account for devices that have been reset or otherwise lost their mqtt access token
         /// </remarks>
-        [ProducesResponseType(typeof(DeviceRegistrationDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
@@ -45,9 +48,8 @@ namespace EE579.Api.Controllers
         }
 
         /// <remarks>
-        /// Gets a list of devices that have yet to be claimed by a tenant
+        /// Gets a list of devices that have yet to be claimed by a tenant and are on the same subnet as the request has come from. This prevents users from claiming devices that don't belong to them
         /// </remarks>
-        [ProducesResponseType(typeof(List<DeviceDto>), StatusCodes.Status200OK)]
         [HttpGet]
         [Route("unclaimed")]
         public ApiList<DeviceDto> GetUnclaimed()
@@ -56,9 +58,10 @@ namespace EE579.Api.Controllers
         }
 
         /// <remarks>
-        /// Used to update a device's details
+        /// Used to update a device's details. This is also used to claim a device. When a device is first updated, it's tenantId is set to the tenant in the header
         /// </remarks>
-        [ProducesResponseType(typeof(DeviceDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{deviceId}")]
         public DeviceDto Update([FromBody] DeviceInput input, Guid deviceId)
@@ -69,7 +72,7 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Used to move a device to a new tenant. This will also remove the device from any rules on the previous tenant
         /// </remarks>
-        [ProducesResponseType(typeof(DeviceDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPut]
         [Route("{deviceId}/move-tenant/{newTenantId}")]
         public DeviceDto Update(Guid deviceId, Guid newTenantId)
@@ -78,9 +81,9 @@ namespace EE579.Api.Controllers
         }
 
         /// <remarks>
-        /// Removes the device and all of its integrations from the current tenant. This will allow it to be claimed by another tenant
+        /// Removes the device and all of it's rule integrations from the current tenant. This will allow it to be claimed by another tenant
         /// </remarks>
-        [ProducesResponseType(typeof(DeviceRegistrationDto), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
         [Route("{deviceId}/unclaim")]
         public void Delete()

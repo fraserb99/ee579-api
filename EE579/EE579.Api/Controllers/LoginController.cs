@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using EE579.Api.Examples;
 using EE579.Core.Slices.Auth;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Core.Slices.Devices.Models;
@@ -29,6 +31,8 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Allows a user to login to their account
         /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("/login")]
         [AllowAnonymous]

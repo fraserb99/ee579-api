@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
 using EE579.Core.Slices.Rules.Models;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace EE579.Api.Controllers
 {
@@ -21,7 +23,8 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Gets a list of rules set up in the current client
         /// </remarks>
-        [ProducesResponseType(typeof(List<RuleDto>), StatusCodes.Status200OK)]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(RuleExample))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
         public ApiList<RuleDto> Get()
         {
@@ -31,7 +34,9 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Creates a rule
         /// </remarks>
-        [ProducesResponseType(typeof(RuleDto), StatusCodes.Status200OK)]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(RuleExample))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
         public RuleDto Create([FromBody] RuleInputDto input)
         {
@@ -41,10 +46,12 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Updates a rule
         /// </remarks>
-        [ProducesResponseType(typeof(RuleDto), StatusCodes.Status200OK)]
+        [SwaggerResponseExample(StatusCodes.Status200OK, typeof(RuleExample))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
-        [Route("{deviceId}")]
-        public RuleDto Update(string deviceId, [FromBody] RuleInputDto input)
+        [Route("{ruleId}")]
+        public RuleDto Update(string ruleId, [FromBody] RuleInputDto input)
         {
             throw new NotImplementedException();
         }
@@ -52,9 +59,10 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Deletes a rule
         /// </remarks>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
-        [Route("{deviceId}")]
-        public RuleDto Delete(string deviceId)
+        [Route("{ruleId}")]
+        public void Delete(string ruleId)
         {
             throw new NotImplementedException();
         }

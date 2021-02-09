@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
 using EE579.Core.Slices.DeviceGroups.Models;
@@ -30,6 +31,8 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Creates a new device group
         /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
         public DeviceGroupDto Create([FromBody] DeviceGroupInput input)
         {
@@ -39,9 +42,11 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Updates a device group
         /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [Route("{groupId}")]
         [HttpPut]
-        public DeviceGroupDto Update(string deviceId, [FromBody] DeviceGroupInput input)
+        public DeviceGroupDto Update(string groupId, [FromBody] DeviceGroupInput input)
         {
             throw new NotImplementedException();
         }
@@ -71,9 +76,10 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Deletes a device group
         /// </remarks>
-        [Route("{deviceId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [Route("{groupId}")]
         [HttpDelete]
-        public void Delete(string deviceId)
+        public void Delete(string groupId)
         {
 
         }

@@ -4,14 +4,16 @@ using EE579.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EE579.Domain.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210209141328_RefactorRules")]
+    partial class RefactorRules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,12 +142,11 @@ namespace EE579.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("OutputType")
                         .HasColumnType("int");
+
+                    b.Property<string>("Params")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("RuleId")
                         .HasColumnType("uniqueidentifier");
@@ -157,8 +158,6 @@ namespace EE579.Domain.Migrations
                     b.HasIndex("RuleId");
 
                     b.ToTable("RuleOutputs");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("RuleOutput");
                 });
 
             modelBuilder.Entity("EE579.Domain.Entities.Tenant", b =>
@@ -232,28 +231,6 @@ namespace EE579.Domain.Migrations
                     b.HasDiscriminator().HasValue("ButtonPushedInput");
                 });
 
-            modelBuilder.Entity("EE579.Domain.Entities.Inputs.PotentiometerInput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleInput");
-
-                    b.Property<int>("GreaterThan")
-                        .HasColumnType("int")
-                        .HasColumnName("PotentiometerInput_GreaterThan");
-
-                    b.Property<int>("LessThan")
-                        .HasColumnType("int")
-                        .HasColumnName("PotentiometerInput_LessThan");
-
-                    b.HasDiscriminator().HasValue("PotentiometerInput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Inputs.PowerOnInput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleInput");
-
-                    b.HasDiscriminator().HasValue("PowerOnInput");
-                });
-
             modelBuilder.Entity("EE579.Domain.Entities.Inputs.SwitchInput", b =>
                 {
                     b.HasBaseType("EE579.Domain.Entities.RuleInput");
@@ -265,128 +242,6 @@ namespace EE579.Domain.Migrations
                         .HasColumnType("bit");
 
                     b.HasDiscriminator().HasValue("SwitchInput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Inputs.TemperatureInput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleInput");
-
-                    b.Property<int>("GreaterThan")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LessThan")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue("TemperatureInput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Output.BuzzerBeepOutput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleOutput");
-
-                    b.Property<int>("OffDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OnDuration")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue("BuzzerBeepOutput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Output.BuzzerOnOutput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleOutput");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue("BuzzerOnOutput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Output.LedBlinkOutput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleOutput");
-
-                    b.Property<int>("Colour")
-                        .HasColumnType("int")
-                        .HasColumnName("LedBlinkOutput_Colour");
-
-                    b.Property<int>("Period")
-                        .HasColumnType("int")
-                        .HasColumnName("LedBlinkOutput_Period");
-
-                    b.Property<int>("Peripheral")
-                        .HasColumnType("int")
-                        .HasColumnName("LedBlinkOutput_Peripheral");
-
-                    b.HasDiscriminator().HasValue("LedBlinkOutput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Output.LedBreatheOutput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleOutput");
-
-                    b.Property<int>("Colour")
-                        .HasColumnType("int")
-                        .HasColumnName("LedBreatheOutput_Colour");
-
-                    b.Property<int>("Period")
-                        .HasColumnType("int")
-                        .HasColumnName("LedBreatheOutput_Period");
-
-                    b.Property<int>("Peripheral")
-                        .HasColumnType("int")
-                        .HasColumnName("LedBreatheOutput_Peripheral");
-
-                    b.HasDiscriminator().HasValue("LedBreatheOutput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Output.LedCycleOutput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleOutput");
-
-                    b.Property<bool>("Direction")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Period")
-                        .HasColumnType("int")
-                        .HasColumnName("LedCycleOutput_Period");
-
-                    b.HasDiscriminator().HasValue("LedCycleOutput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Output.LedFadeOutput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleOutput");
-
-                    b.Property<int>("Colour")
-                        .HasColumnType("int")
-                        .HasColumnName("LedFadeOutput_Colour");
-
-                    b.Property<int>("Period")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Peripheral")
-                        .HasColumnType("int")
-                        .HasColumnName("LedFadeOutput_Peripheral");
-
-                    b.HasDiscriminator().HasValue("LedFadeOutput");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Output.LedOutput", b =>
-                {
-                    b.HasBaseType("EE579.Domain.Entities.RuleOutput");
-
-                    b.Property<int>("Colour")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Peripheral")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Value")
-                        .HasColumnType("bit");
-
-                    b.HasDiscriminator().HasValue("LedOutput");
                 });
 
             modelBuilder.Entity("DeviceDeviceGroup", b =>

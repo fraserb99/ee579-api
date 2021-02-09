@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Core.Slices.Users;
@@ -26,9 +27,10 @@ namespace EE579.Api.Controllers
             _userService = userService;
         }
         /// <remarks>
-        /// Allows a user to create an account
+        /// Allows a user to create an account. This will also create an initial tenant for them as well
         /// </remarks>
-        [ProducesResponseType(typeof(SessionDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost]
         [Route("create")]
@@ -40,9 +42,10 @@ namespace EE579.Api.Controllers
         }
 
         /// <remarks>
-        /// Allows a user to update their details - e.g. email
+        /// Allows a user to update their details - e.g. email, name
         /// </remarks>
-        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{userId}")]
         public UserDto Update(Guid userId, [FromBody] UserInput input)

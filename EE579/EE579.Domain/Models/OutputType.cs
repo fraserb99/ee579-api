@@ -1,10 +1,13 @@
-﻿namespace EE579.Core.Slices.Rules.Models
+﻿namespace EE579.Domain.Models
 {
     public enum OutputType
     {
-        Led1,
-        Led2,
-        Led3,
-        Buzzer,
+        LedOutput,
+        LedBreathe,
+        LedBlink,
+        LedFade,
+        LedCycle,
+        BuzzerOn,
+        BuzzerBeep,
     }
 }

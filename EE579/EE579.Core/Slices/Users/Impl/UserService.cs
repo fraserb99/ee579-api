@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using EE579.Core.Infrastructure.Exceptions;
+using EE579.Core.Infrastructure.Exceptions.Models;
 
 namespace EE579.Core.Slices.Users.Impl
 {
@@ -26,9 +28,14 @@ namespace EE579.Core.Slices.Users.Impl
 
         public SessionDto Create(CreateUserInput input)
         {
-            if (input.Password == null || input.Email == null || input.PasswordConfirm == null) throw new Exception();
-            if (input.Password != input.PasswordConfirm ) throw new Exception();
-            if (_context.Users.FirstOrDefault(x => x.Email == input.Email) != null) throw new Exception();
+            if (input.Password != input.PasswordConfirm ) 
+                throw new FormErrorException(new List<FieldError>
+                {
+                    new FieldError("password", "Passwords must match"),
+                    new FieldError("passwordConfirm", "Passwords must match")
+                });
+            if (_context.Users.FirstOrDefault(x => x.Email == input.Email) != null) 
+                throw new FormErrorException(new FieldError("email", "This email has already been used"));
                 
             Regex regex = new Regex(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
             Match match = regex.Match(input.Email);

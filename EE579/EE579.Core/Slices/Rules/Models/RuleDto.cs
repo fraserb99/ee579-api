@@ -7,15 +7,20 @@ namespace EE579.Core.Slices.Rules.Models
 {
     public class RuleDto
     {
+        [Required]
         public Guid Id { get; set; }
         public string Name { get; set; }
+
         /// <summary>
-        /// A list of devices which will trigger the rule if the correct inputs are detected from them
+        /// A list of RuleInputDtos
         /// </summary>
-        public List<RuleInputDto> InputDevices { get; set; }
+        [Required]
+        public List<dynamic> InputDevices { get; set; }
+
         /// <summary>
-        /// A list of devices which will perform the output actions when the rule is triggered
+        /// A list of RuleOutputDtos
         /// </summary>
-        public List<DeviceDto> OutputDevices { get; set; }
+        [Required]
+        public List<dynamic> OutputDevices { get; set; }
     }
 }

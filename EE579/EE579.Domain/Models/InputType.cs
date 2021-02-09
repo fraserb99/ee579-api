@@ -5,6 +5,7 @@
         ButtonPushed,
         Switch,
         Temperature,
-        Potentiometer
+        Potentiometer,
+        Power
     }
 }

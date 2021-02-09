@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
 using EE579.Core.Slices.Tenants.Models;
@@ -31,6 +32,7 @@ namespace EE579.Api.Controllers
         /// Creates a tenant
         /// </remarks>
         [ProducesResponseType(typeof(TenantDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("create")]
         public TenantDto Create([FromBody] TenantInput input)
@@ -42,7 +44,8 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Updates a Tenant
         /// </remarks>
-        [ProducesResponseType(typeof(TenantDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{tenantId}")]
         public TenantDto Update([FromBody] TenantInput input, Guid tenantId)
@@ -65,6 +68,7 @@ namespace EE579.Api.Controllers
         /// Invite a user to join a tenant
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("{tenantId}")]
         public void Invite([FromBody] InviteInput input)
