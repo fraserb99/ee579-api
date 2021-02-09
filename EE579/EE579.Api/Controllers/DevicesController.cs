@@ -7,6 +7,7 @@ using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Core.Slices.Devices.Models;
+using EE579.Core.Slices.IotHub;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,8 +21,14 @@ namespace EE579.Api.Controllers
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
-    public class DevicesController
+    public class DevicesController : ControllerBase
     {
+        private readonly IIotMessagingService _messagingService;
+        public DevicesController(IIotMessagingService msgSrv)
+        {
+            _messagingService = msgSrv;
+        }
+
         /// <remarks>
         /// Gets a list of devices belonging to the current tenant
         /// </remarks>
@@ -89,6 +96,15 @@ namespace EE579.Api.Controllers
         public void Delete()
         {
             throw new NotImplementedException();
+        }
+
+      
+        [HttpPost]
+        [Route("dk")]
+        public ActionResult IotTest()
+        {
+            _messagingService.SendMessage("00:0a:95:9d:68:16", new Dictionary<string, string>(), "dk");
+            return Ok();
         }
     }
 }

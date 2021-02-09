@@ -28,6 +28,8 @@ using EE579.Core.Slices.Users.Impl;
 using EE579.Core.Slices.Auth;
 using EE579.Core.Slices.Auth.Impl;
 using Microsoft.IdentityModel.Tokens;
+using EE579.Core.Slices.IotHub;
+using EE579.Core.Slices.IotHub.Impl;
 
 namespace EE579.Api
 {
@@ -99,6 +101,7 @@ namespace EE579.Api
 
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IIotMessagingService, IotMessagingService>();
         }
 
         private void ConfigureEfCore(IServiceCollection services)
