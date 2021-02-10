@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace EE579.Domain.Entities
@@ -19,5 +20,10 @@ namespace EE579.Domain.Entities
         [InverseProperty("Owner")]
         public virtual ICollection<Tenant> OwnedTenants { get; set; }
         public virtual ICollection<Tenant> Tenants { get; set; }
+
+        public IEnumerable<Tenant> GetTenants()
+        {
+            return OwnedTenants.Concat(Tenants);
+        }
     }
 }

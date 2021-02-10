@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using EE579.Core.Infrastructure.Exceptions;
 using EE579.Core.Infrastructure.Exceptions.Models;
+using EE579.Core.Slices.Tenants.Models;
 
 namespace EE579.Core.Slices.Users.Impl
 {
@@ -18,12 +19,14 @@ namespace EE579.Core.Slices.Users.Impl
     {
         private readonly IMapper _mapper;
         private readonly DatabaseContext _context;
-        private readonly IAuthService _auth;
-        public UserService(IMapper mapper, DatabaseContext context, IAuthService auth)
+        private readonly IAuthService _authService;
+        private readonly ICurrentUser _currentUser;
+        public UserService(IMapper mapper, DatabaseContext context, IAuthService authService, ICurrentUser currentUser)
         {
             _mapper = mapper;
             _context = context;
-            _auth = auth;
+            _authService = authService;
+            _currentUser = currentUser;
         }
 
         public SessionDto Create(CreateUserInput input)
@@ -54,7 +57,7 @@ namespace EE579.Core.Slices.Users.Impl
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            var token = _auth.CreateToken(user);
+            var token = _authService.CreateToken(user);
             var userDto = _mapper.Map<UserDto>(user);
             var session = new SessionDto { 
                 User = userDto,
@@ -63,6 +66,16 @@ namespace EE579.Core.Slices.Users.Impl
             };
 
             return session;
+        }
+
+        public IEnumerable<TenantDto> GetTenants()
+        {
+            var currentUser = _currentUser.Get();
+
+            var tenants = currentUser.GetTenants();
+            var tenantDtos = _mapper.Map<List<TenantDto>>(tenants);
+
+            return tenantDtos;
         }
     }
 }

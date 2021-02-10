@@ -27,6 +27,7 @@ using EE579.Core.Slices.Users;
 using EE579.Core.Slices.Users.Impl;
 using EE579.Core.Slices.Auth;
 using EE579.Core.Slices.Auth.Impl;
+using EE579.Core.Slices.Tenants;
 using Microsoft.IdentityModel.Tokens;
 
 namespace EE579.Api
@@ -97,8 +98,12 @@ namespace EE579.Api
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            services.AddHttpContextAccessor();
+
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<ITenantService, TenantService>();
+            services.AddTransient<ICurrentUser, CurrentUser>();
         }
 
         private void ConfigureEfCore(IServiceCollection services)

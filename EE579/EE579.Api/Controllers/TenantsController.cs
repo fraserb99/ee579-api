@@ -6,6 +6,7 @@ using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
 using EE579.Core.Slices.Tenants.Models;
+using EE579.Core.Slices.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +19,12 @@ namespace EE579.Api.Controllers
     [Route("[controller]")]
     public class TenantsController : ControllerBase
     {
+        private readonly IUserService _userService;
+
+        public TenantsController(IUserService userService)
+        {
+            _userService = userService;
+        }
         /// <remarks>
         /// Gets a list of tenants the user can access
         /// </remarks>
@@ -25,7 +32,9 @@ namespace EE579.Api.Controllers
         [HttpGet]
         public ApiList<TenantDto> Get()
         {
-            throw new NotImplementedException();
+            var tenantDtos = _userService.GetTenants();
+
+            return new ApiList<TenantDto>(tenantDtos);
         }
 
         /// <remarks>
