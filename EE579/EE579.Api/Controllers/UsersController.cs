@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Slices.Auth.Models;
@@ -21,10 +22,12 @@ namespace EE579.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
         /// <remarks>
         /// Allows a user to create an account. This will also create an initial tenant for them as well
@@ -50,7 +53,9 @@ namespace EE579.Api.Controllers
         [Route("{userId}")]
         public UserDto Update(Guid userId, [FromBody] UserInput input)
         {
-            throw new NotImplementedException();
+            var user = _userService.Update(userId, input);
+            var userDto = _mapper.Map<UserDto>(user);
+            return userDto;
         }
     }
 }
