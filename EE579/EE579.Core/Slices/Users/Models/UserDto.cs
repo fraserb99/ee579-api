@@ -12,6 +12,7 @@ namespace EE579.Core.Slices.Users.Models
         [Required]
         public Guid Id { get; set; }
         public string Email { get; set; }
+        public string Name { get; set; }
 
         public List<TenantDto> Tenants { get; set; }
     }
