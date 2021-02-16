@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EE579.Domain.Entities
 {
-    public class Tenant : Entity
+    public class Tenant : EntityWithGuid
     {
         [Required]
         public string Name { get; set; }

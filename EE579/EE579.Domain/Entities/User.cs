@@ -7,7 +7,7 @@ using System.Text;
 
 namespace EE579.Domain.Entities
 {
-    public class User : Entity
+    public class User : EntityWithGuid
     {
         [Required]
         public string Email { get; set; }

@@ -10,7 +10,7 @@ namespace EE579.Core.Infrastructure.Mapping
     {
         public EntityProfile()
         {
-            CreateMap<Entity, Guid>()
+            CreateMap<EntityWithGuid, Guid>()
                 .IncludeAllDerived()
                 .ConvertUsing(x => x.Id);
         }

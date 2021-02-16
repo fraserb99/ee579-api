@@ -4,8 +4,8 @@ using System.Text;
 
 namespace EE579.Domain.Entities
 {
-    public class Entity<T>
+    public class EntityWithGuid : Entity<Guid>
     {
-        public T Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

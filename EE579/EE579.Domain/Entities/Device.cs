@@ -6,8 +6,12 @@ using EE579.Domain.Models;
 
 namespace EE579.Domain.Entities
 {
-    public class Device
+    public class Device : Entity<string>
     {
+        public Device(string deviceId)
+        {
+            Id = deviceId;
+        }
         public string Id { get; set; }
         [Required]
         public string Name { get; set; }

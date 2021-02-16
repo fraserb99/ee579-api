@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EE579.Domain.Entities
 {
-    public class DeviceGroup : Entity
+    public class DeviceGroup : EntityWithGuid
     {
         [Required]
         public string Name { get; set; }

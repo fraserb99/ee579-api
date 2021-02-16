@@ -24,6 +24,7 @@ namespace EE579.Domain
 
         public virtual DbSet<Tenant> Tenants { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Rule> Rules { get; set; }
         public virtual DbSet<RuleInput> RuleInputs { get; set; }
         public virtual DbSet<RuleOutput> RuleOutputs { get; set; }
