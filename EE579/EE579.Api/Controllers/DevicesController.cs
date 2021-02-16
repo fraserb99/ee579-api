@@ -6,6 +6,7 @@ using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
 using EE579.Core.Slices.Auth.Models;
+using EE579.Core.Slices.Devices;
 using EE579.Core.Slices.Devices.Models;
 using EE579.Core.Slices.IotHub;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,9 +25,11 @@ namespace EE579.Api.Controllers
     public class DevicesController : ControllerBase
     {
         private readonly IIotMessagingService _messagingService;
-        public DevicesController(IIotMessagingService msgSrv)
+        private readonly IDeviceService _deviceService;
+        public DevicesController(IIotMessagingService msgSrv, IDeviceService deviceService)
         {
             _messagingService = msgSrv;
+            _deviceService = deviceService;
         }
 
         /// <remarks>
@@ -44,14 +47,14 @@ namespace EE579.Api.Controllers
         /// If a device has already been added this endpoint will still work, returning a 200 OK instead of 201 Created.
         /// This is to account for devices that have been reset or otherwise lost their mqtt access token
         /// </remarks>
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DeviceRegistrationDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(DeviceRegistrationDto), StatusCodes.Status200OK)]
         [AllowAnonymous]
         [HttpPost]
         [Route("register")]
-        public DeviceRegistrationDto Create([FromBody] RegisterDeviceInput input)
+        public async Task<ActionResult> Create([FromBody] RegisterDeviceInput input)
         {
-            throw new NotImplementedException();
+            return Ok(await _deviceService.Register(input.DeviceId));
         }
 
         /// <remarks>

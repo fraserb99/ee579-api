@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace EE579.Core.Slices.Users
 {
-    public class CurrentUser : ICurrentUser
+    public class CurrentTenant : ICurrentUser
     {
         private readonly HttpContext _httpContext;
         private readonly DatabaseContext _db;
-        public CurrentUser(IHttpContextAccessor httpContextAccessor, DatabaseContext db)
+        public CurrentTenant(IHttpContextAccessor httpContextAccessor, DatabaseContext db)
         {
             _httpContext = httpContextAccessor.HttpContext;
             _db = db;

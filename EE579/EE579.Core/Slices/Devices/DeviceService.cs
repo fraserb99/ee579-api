@@ -18,6 +18,9 @@ namespace EE579.Core.Slices.Devices
         private const string IotHubConnectionString =
             "HostName=IFTTT-Iot-Hub.azure-devices.net;SharedAccessKeyName=registryReadWrite;SharedAccessKey=SpLPXBmM134nhCPQ1tFDsY30jPlPtc3Y6TRRFUOp8KM=";
 
+        private const string DeviceConnectionStringFormat =
+            "HostName=IFTTT-Iot-Hub.azure-devices.net;DeviceId={0};SharedAccessKey={1}";
+
         public DeviceService(DatabaseContext context, IMapper mapper)
             : base(context, mapper)
         {
@@ -31,16 +34,14 @@ namespace EE579.Core.Slices.Devices
 
             if (device == null)
             {
-                device = new Device(deviceId);
+                device = new Device
+                {
+                    Id = deviceId
+                };
                 Repository.Devices.Add(device);
                 Repository.SaveChanges();
 
                 hubDevice = await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
-
-                return new DeviceRegistrationDto
-                {
-                    MqttPassword = hubDevice.Authentication.SymmetricKey.PrimaryKey
-                };
             }
             else
             {
@@ -54,7 +55,7 @@ namespace EE579.Core.Slices.Devices
 
             return new DeviceRegistrationDto
             {
-                MqttPassword = hubDevice.Authentication.SymmetricKey.PrimaryKey
+                MqttPassword = string.Format(DeviceConnectionStringFormat, deviceId, hubDevice.Authentication.SymmetricKey.PrimaryKey)
             };
         }
     }

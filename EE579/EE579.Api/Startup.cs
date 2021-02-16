@@ -27,6 +27,7 @@ using EE579.Core.Slices.Users;
 using EE579.Core.Slices.Users.Impl;
 using EE579.Core.Slices.Auth;
 using EE579.Core.Slices.Auth.Impl;
+using EE579.Core.Slices.Devices;
 using EE579.Core.Slices.Tenants;
 using Microsoft.IdentityModel.Tokens;
 using EE579.Core.Slices.IotHub;
@@ -105,8 +106,10 @@ namespace EE579.Api
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ITenantService, TenantService>();
-            services.AddTransient<ICurrentUser, CurrentUser>();
+            services.AddTransient<ICurrentUser, CurrentTenant>();
             services.AddTransient<IIotMessagingService, IotMessagingService>();
+            services.AddTransient<IDeviceService, DeviceService>();
+            services.AddTransient<ITenantService, TenantService>();
         }
 
         private void ConfigureEfCore(IServiceCollection services)

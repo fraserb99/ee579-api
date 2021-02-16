@@ -8,15 +8,9 @@ namespace EE579.Domain.Entities
 {
     public class Device : Entity<string>
     {
-        public Device(string deviceId)
-        {
-            Id = deviceId;
-        }
         public string Id { get; set; }
-        [Required]
         public string Name { get; set; }
         public string IpAddress { get; set; }
-        [Required]
         public virtual Tenant Tenant { get; set; }
         [Required]
         public DeviceState DeviceState { get; set; }
