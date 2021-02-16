@@ -12,6 +12,8 @@ namespace EE579.Core.Slices.Devices.Mapping
         public DeviceProfile()
         {
             CreateMap<Device, DeviceDto>();
+
+            CreateMap<DeviceInput, Device>();
         }
     }
 }

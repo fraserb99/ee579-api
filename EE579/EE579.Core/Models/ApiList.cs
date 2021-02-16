@@ -7,6 +7,11 @@ namespace EE579.Core.Models
     public class ApiList<T>
     {
         public ApiList() { }
+
+        public ApiList(T item)
+        {
+            Items = new List<T> { item };
+        }
         public ApiList(IEnumerable<T> items)
         {
             Items = new List<T>();

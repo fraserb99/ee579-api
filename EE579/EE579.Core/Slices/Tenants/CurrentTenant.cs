@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace EE579.Core.Slices.Tenants
 {
-    public class CurrentUser : ICurrentTenant
+    public class CurrentTenant : ICurrentTenant
     {
         private readonly HttpContext _httpContext;
         private readonly DatabaseContext _db;
-        public CurrentUser(IHttpContextAccessor httpContextAccessor, DatabaseContext db)
+        public CurrentTenant(IHttpContextAccessor httpContextAccessor, DatabaseContext db)
         {
             _httpContext = httpContextAccessor.HttpContext;
             _db = db;

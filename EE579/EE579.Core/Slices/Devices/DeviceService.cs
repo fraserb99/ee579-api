@@ -8,6 +8,7 @@ using AutoMapper;
 using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Infrastructure.Services;
 using EE579.Core.Slices.Devices.Models;
+using EE579.Core.Slices.Tenants;
 using EE579.Domain;
 using EE579.Domain.Models;
 using Microsoft.AspNetCore.Http;
@@ -28,12 +29,14 @@ namespace EE579.Core.Slices.Devices
             "HostName=IFTTT-Iot-Hub.azure-devices.net;DeviceId={0};SharedAccessKey={1}";
 
         private readonly HttpContext _httpContext;
+        private readonly ICurrentTenant _currentTenant;
 
-        public DeviceService(DatabaseContext context, IMapper mapper, IHttpContextAccessor httpContext)
+        public DeviceService(DatabaseContext context, IMapper mapper, IHttpContextAccessor httpContext, ICurrentTenant currentTenant)
             : base(context, mapper)
         {
             _registry = RegistryManager.CreateFromConnectionString(IotHubConnectionString);
             _httpContext = httpContext.HttpContext;
+            _currentTenant = currentTenant;
         }
         public async Task<DeviceRegistrationDto> Register(string deviceId)
         {
@@ -81,6 +84,15 @@ namespace EE579.Core.Slices.Devices
                 x.IpAddress == currentIp);
 
             return await devices.ToListAsync();
+        }
+
+        protected override void ValidateInput(DeviceInput input, Device entity = null)
+        {
+            if (entity != null && entity.DeviceState == DeviceState.Unclaimed)
+            {
+                entity.Tenant = _currentTenant.Get();
+                entity.DeviceState = DeviceState.Claimed;
+            }
         }
     }
 }

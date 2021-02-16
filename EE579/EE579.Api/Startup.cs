@@ -106,10 +106,11 @@ namespace EE579.Api
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ITenantService, TenantService>();
-            services.AddTransient<ICurrentUser, CurrentTenant>();
+            services.AddTransient<ICurrentUser, CurrentUser>();
             services.AddTransient<IIotMessagingService, IotMessagingService>();
             services.AddTransient<IDeviceService, DeviceService>();
             services.AddTransient<ITenantService, TenantService>();
+            services.AddTransient<ICurrentTenant, CurrentTenant>();
         }
 
         private void ConfigureEfCore(IServiceCollection services)

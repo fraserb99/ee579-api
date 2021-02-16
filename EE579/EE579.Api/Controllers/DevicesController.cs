@@ -77,13 +77,15 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Used to update a device's details. This is also used to claim a device. When a device is first updated, it's tenantId is set to the tenant in the header
         /// </remarks>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiList<DeviceDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{deviceId}")]
-        public DeviceDto Update([FromBody] DeviceInput input, Guid deviceId)
+        public ActionResult Update([FromBody] DeviceInput input, string deviceId)
         {
-            throw new NotImplementedException();
+            var device = _deviceService.Update(deviceId, input);
+
+            return Ok(new ApiList<DeviceDto>(_mapper.Map<DeviceDto>(device)));
         }
 
         /// <remarks>
