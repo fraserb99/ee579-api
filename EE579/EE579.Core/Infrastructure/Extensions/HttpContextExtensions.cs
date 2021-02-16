@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Security;
 using System.Security.Claims;
 using Castle.Core.Internal;
@@ -25,9 +26,9 @@ namespace EE579.Core.Infrastructure.Extensions
             return new Guid(header.FirstOrDefault());
         }
 
-        public static string GetIpAddress(this HttpContext context)
+        public static IPAddress GetIpAddress(this HttpContext context)
         {
-            return context.Connection.RemoteIpAddress.ToString(); //var ip = context.Request.Headers
+            return context.Connection.RemoteIpAddress; //var ip = context.Request.Headers
         }
     }
 }

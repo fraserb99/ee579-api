@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -7,8 +9,10 @@ using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Infrastructure.Services;
 using EE579.Core.Slices.Devices.Models;
 using EE579.Domain;
+using EE579.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Devices;
+using Microsoft.EntityFrameworkCore;
 using Device = EE579.Domain.Entities.Device;
 
 namespace EE579.Core.Slices.Devices
@@ -42,7 +46,7 @@ namespace EE579.Core.Slices.Devices
                 device = new Device
                 {
                     Id = deviceId,
-                    IpAddress = _httpContext.GetIpAddress()
+                    IpAddress = _httpContext.GetIpAddress().ToString()
                 };
                 Repository.Devices.Add(device);
                 await Repository.SaveChangesAsync();
@@ -51,7 +55,7 @@ namespace EE579.Core.Slices.Devices
             }
             else
             {
-                device.IpAddress = _httpContext.GetIpAddress();
+                device.IpAddress = _httpContext.GetIpAddress().ToString();
                 await Repository.SaveChangesAsync();
 
                 hubDevice = await _registry.GetDeviceAsync(deviceId);
@@ -66,6 +70,17 @@ namespace EE579.Core.Slices.Devices
             {
                 MqttPassword = string.Format(DeviceConnectionStringFormat, deviceId, hubDevice.Authentication.SymmetricKey.PrimaryKey)
             };
+        }
+
+        public async Task<IEnumerable<Device>> GetUnclaimed()
+        {
+            var currentIp = _httpContext.GetIpAddress().ToString();
+
+            var devices = Repository.Devices.Where(x =>
+                x.DeviceState == DeviceState.Unclaimed &&
+                x.IpAddress == currentIp);
+
+            return await devices.ToListAsync();
         }
     }
 }

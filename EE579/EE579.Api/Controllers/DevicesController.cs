@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
@@ -26,10 +27,12 @@ namespace EE579.Api.Controllers
     {
         private readonly IIotMessagingService _messagingService;
         private readonly IDeviceService _deviceService;
-        public DevicesController(IIotMessagingService msgSrv, IDeviceService deviceService)
+        private readonly IMapper _mapper;
+        public DevicesController(IIotMessagingService msgSrv, IDeviceService deviceService, IMapper mapper)
         {
             _messagingService = msgSrv;
             _deviceService = deviceService;
+            _mapper = mapper;
         }
 
         /// <remarks>
@@ -60,11 +63,15 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Gets a list of devices that have yet to be claimed by a tenant and are on the same subnet as the request has come from. This prevents users from claiming devices that don't belong to them
         /// </remarks>
+        [ProducesResponseType(typeof(ApiList<DeviceDto>), StatusCodes.Status200OK)]
         [HttpGet]
         [Route("unclaimed")]
-        public ApiList<DeviceDto> GetUnclaimed()
+        public async Task<ActionResult> GetUnclaimed()
         {
-            throw new NotImplementedException();
+            var devices = await _deviceService.GetUnclaimed();
+            var deviceDtos = _mapper.Map<List<DeviceDto>>(devices);
+
+            return Ok(new ApiList<DeviceDto>(deviceDtos));
         }
 
         /// <remarks>
