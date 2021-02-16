@@ -7,7 +7,7 @@ using EE579.Domain.Entities;
 
 namespace EE579.Core.Slices.Tenants
 {
-    public interface ITenantService : ICrudAppService<Tenant, TenantDto>
+    public interface ITenantService : ICrudAppService<Tenant, TenantInput>
     {
         public IEnumerable<TenantDto> Get();
     }
