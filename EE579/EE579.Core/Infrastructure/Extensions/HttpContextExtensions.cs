@@ -24,5 +24,10 @@ namespace EE579.Core.Infrastructure.Extensions
             
             return new Guid(header.FirstOrDefault());
         }
+
+        public static string GetIpAddress(this HttpContext context)
+        {
+            return context.Connection.RemoteIpAddress.ToString(); //var ip = context.Request.Headers
+        }
     }
 }

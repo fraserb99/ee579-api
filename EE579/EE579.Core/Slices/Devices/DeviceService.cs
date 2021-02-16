@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Infrastructure.Services;
 using EE579.Core.Slices.Devices.Models;
 using EE579.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Devices;
 using Device = EE579.Domain.Entities.Device;
 
@@ -21,10 +23,13 @@ namespace EE579.Core.Slices.Devices
         private const string DeviceConnectionStringFormat =
             "HostName=IFTTT-Iot-Hub.azure-devices.net;DeviceId={0};SharedAccessKey={1}";
 
-        public DeviceService(DatabaseContext context, IMapper mapper)
+        private readonly HttpContext _httpContext;
+
+        public DeviceService(DatabaseContext context, IMapper mapper, IHttpContextAccessor httpContext)
             : base(context, mapper)
         {
             _registry = RegistryManager.CreateFromConnectionString(IotHubConnectionString);
+            _httpContext = httpContext.HttpContext;
         }
         public async Task<DeviceRegistrationDto> Register(string deviceId)
         {
@@ -36,15 +41,19 @@ namespace EE579.Core.Slices.Devices
             {
                 device = new Device
                 {
-                    Id = deviceId
+                    Id = deviceId,
+                    IpAddress = _httpContext.GetIpAddress()
                 };
                 Repository.Devices.Add(device);
-                Repository.SaveChanges();
+                await Repository.SaveChangesAsync();
 
                 hubDevice = await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
             }
             else
             {
+                device.IpAddress = _httpContext.GetIpAddress();
+                await Repository.SaveChangesAsync();
+
                 hubDevice = await _registry.GetDeviceAsync(deviceId);
 
                 if (hubDevice == null)
