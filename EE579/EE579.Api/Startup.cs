@@ -103,6 +103,8 @@ namespace EE579.Api
 
             services.AddHttpContextAccessor();
 
+            services.AddHostedService<IotHubWorkerService>();
+
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ITenantService, TenantService>();
