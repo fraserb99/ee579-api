@@ -9,9 +9,8 @@ namespace EE579.Domain.Entities
     {
         [Required]
         public string Name { get; set; }
-        [Required]
-        public virtual User Owner { get; set; }
         public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<Device> Devices { get; set; }
+        public virtual List<TenantUser> TenantUsers { get; set; }
     }
 }

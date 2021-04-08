@@ -4,14 +4,16 @@ using EE579.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EE579.Domain.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210408122807_AddTenantUser")]
+    partial class AddTenantUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,9 +117,6 @@ namespace EE579.Domain.Migrations
                     b.Property<Guid?>("RuleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -126,8 +125,6 @@ namespace EE579.Domain.Migrations
                     b.HasIndex("DeviceId");
 
                     b.HasIndex("RuleId");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("RuleInputs");
 
@@ -154,16 +151,11 @@ namespace EE579.Domain.Migrations
                     b.Property<Guid?>("RuleId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
 
                     b.HasIndex("RuleId");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("RuleOutputs");
 
@@ -200,7 +192,7 @@ namespace EE579.Domain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TenantUsers");
+                    b.ToTable("TenantUser");
                 });
 
             modelBuilder.Entity("EE579.Domain.Entities.User", b =>
@@ -450,13 +442,7 @@ namespace EE579.Domain.Migrations
                         .WithMany("Inputs")
                         .HasForeignKey("RuleId");
 
-                    b.HasOne("EE579.Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId");
-
                     b.Navigation("Device");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("EE579.Domain.Entities.RuleOutput", b =>
@@ -471,13 +457,7 @@ namespace EE579.Domain.Migrations
                         .WithMany("Outputs")
                         .HasForeignKey("RuleId");
 
-                    b.HasOne("EE579.Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId");
-
                     b.Navigation("Device");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("EE579.Domain.Entities.TenantUser", b =>

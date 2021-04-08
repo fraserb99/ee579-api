@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EE579.Api.Controllers
 {
@@ -30,9 +31,9 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [ProducesResponseType(typeof(List<TenantDto>), StatusCodes.Status200OK)]
         [HttpGet]
-        public ApiList<TenantDto> Get()
+        public async Task<ApiList<TenantDto>> Get()
         {
-            var tenantDtos = _userService.GetTenants();
+            var tenantDtos = await _userService.GetTenants();
 
             return new ApiList<TenantDto>(tenantDtos);
         }
@@ -57,7 +58,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{tenantId}")]
-        public TenantDto Update([FromBody] TenantInput input, Guid tenantId)
+        public async Task<TenantDto> Update([FromBody] TenantInput input, Guid tenantId)
         {
             throw new NotImplementedException();
         }
@@ -68,7 +69,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
         [Route("{tenantId}")]
-        public void Delete()
+        public async Task Delete()
         {
 
         }
@@ -80,7 +81,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("{tenantId}")]
-        public void Invite([FromBody] InviteInput input)
+        public async Task Invite([FromBody] InviteInput input)
         {
 
         }
@@ -91,7 +92,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
         [Route("{tenantId}/users/{userId}")]
-        public void RemoveUser(Guid tenantId, Guid userId)
+        public async Task RemoveUser(Guid tenantId, Guid userId)
         {
 
         }

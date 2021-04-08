@@ -5,61 +5,93 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace EE579.Core.Infrastructure.Services
 {
 
-    public abstract class CrudAppServiceBase<TEntity, TInput, TId> where TEntity : Entity<TId>
+    public abstract class CrudAppService<TEntity, TInput, TCreateInput, TContext, TId> where TEntity : Entity<TId> where TContext : DbContext
     {
-        protected readonly DatabaseContext Repository;
+        protected readonly TContext Repository;
         protected readonly IMapper Mapper;
 
-        protected CrudAppServiceBase(DatabaseContext repository, IMapper mapper)
+        protected CrudAppService(TContext repository, IMapper mapper)
         {
             Repository = repository;
             Mapper = mapper;
         }
 
-        public virtual List<TEntity> GetAll()
+        public virtual async Task<List<TEntity>> GetAll()
         {
-            return Repository.Set<TEntity>().ToList();
+            return await Repository.Set<TEntity>().ToListAsync();
         }
 
-        public virtual TEntity GetById(TId id)
+        public virtual async Task<TEntity> GetById(TId id)
         {
-            return Repository.Find<TEntity>(id);
+            return await Repository.FindAsync<TEntity>(id);
         }
 
-        public virtual TEntity Create(TInput input)
+        public virtual async Task<TEntity> Create(TCreateInput input)
         {
-            ValidateInput(input);
+            await ValidateCreateInputAsync(input);
             var entity = Mapper.Map<TEntity>(input);
 
-            Repository.Add(entity);
-            Repository.SaveChanges();
+            await Repository.AddAsync(entity);
+            await Repository.SaveChangesAsync();
 
             return entity;
         }
 
-        public virtual TEntity Update(TId id, TInput input)
+        public virtual async Task<TEntity> Update(TId id, TInput input)
         {
-            var entity = Repository.Find<TEntity>(id);
-            ValidateInput(input, entity);
+            var entity = await Repository.FindAsync<TEntity>(id);
+            await ValidateInputAsync(input, entity);
 
             entity = Mapper.Map(input, entity);
-            Repository.SaveChanges();
+            await Repository.SaveChangesAsync();
 
             return entity;
         }
 
-        public virtual void Delete(TId id)
+        public virtual async Task Delete(TId id)
         {
-            var entity = GetById(id);
+            var entity = await GetById(id);
 
             Repository.Remove(entity);
-            Repository.SaveChanges();
+            await Repository.SaveChangesAsync();
         }
 
-        protected virtual void ValidateInput(TInput input, TEntity entity = null) { }
+        protected virtual async Task ValidateInputAsync(TInput input, TEntity entity = null) { }
+
+        protected virtual async Task ValidateCreateInputAsync(TCreateInput input) { }
+    }
+
+    public abstract class CrudAppService<TEntity, TInput, TCreateInput> : CrudAppService<TEntity, TInput, TCreateInput, DatabaseContext, Guid>
+        where TEntity : Entity<Guid>
+    {
+        protected CrudAppService(DatabaseContext repository, IMapper mapper)
+            : base(repository, mapper) { }
+    }
+
+    public abstract class CrudAppService<TEntity, TInput> : CrudAppService<TEntity, TInput, TInput, DatabaseContext, Guid>
+        where TEntity : Entity<Guid>
+    {
+        protected CrudAppService(DatabaseContext repository, IMapper mapper)
+            : base(repository, mapper) { }
+    }
+
+    public abstract class CrudAppServiceWithIdType<TEntity, TInput, TId> : CrudAppService<TEntity, TInput, TInput, DatabaseContext, TId>
+        where TEntity : Entity<TId>
+    {
+        protected CrudAppServiceWithIdType(DatabaseContext repository, IMapper mapper)
+            : base(repository, mapper) { }
+    }
+
+    public abstract class CrudAppServiceWithIdType<TEntity, TInput, TCreateInput, TId> : CrudAppService<TEntity, TInput, TCreateInput, DatabaseContext, TId>
+        where TEntity : Entity<TId>
+    {
+        protected CrudAppServiceWithIdType(DatabaseContext repository, IMapper mapper)
+            : base(repository, mapper) { }
     }
 }

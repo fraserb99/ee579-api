@@ -1,4 +1,5 @@
-﻿using EE579.Core.Infrastructure.Extensions;
+﻿using System.Threading.Tasks;
+using EE579.Core.Infrastructure.Extensions;
 using EE579.Domain;
 using EE579.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -15,9 +16,9 @@ namespace EE579.Core.Slices.Users
             _db = db;
         }
 
-        public User Get()
+        public async Task<User> Get()
         {
-            return _db.Users.Find(_httpContext.GetUserId());
+            return await _db.Users.FindAsync(_httpContext.GetUserId());
         }
     }
 }

@@ -48,10 +48,7 @@ namespace EE579.Core.Slices.IotHub
                     await _eventProcessor.StartProcessingAsync(stoppingToken);
                     await Task.Delay(Timeout.Infinite, stoppingToken);
                 }
-                catch (TaskCanceledException ex)
-                {
-
-                }
+                catch (TaskCanceledException _) { }
                 finally
                 {
                     await _eventProcessor.StopProcessingAsync();
@@ -65,16 +62,24 @@ namespace EE579.Core.Slices.IotHub
             }
         }
 
-        private Task ProcessEventHandler(ProcessEventArgs args)
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            Console.WriteLine(args.Data.EventBody.ToString());
-            return Task.CompletedTask;
+            await _eventProcessor.StopProcessingAsync();
+            await base.StopAsync(cancellationToken);
         }
 
-        private Task ProcessErrorHandler(ProcessErrorEventArgs args)
+        private async Task ProcessEventHandler(ProcessEventArgs args)
+        {
+            try
+            {
+                Console.WriteLine(args.Data.EnqueuedTime.DateTime.ToString() + ": " + args.Data.EventBody.ToString());
+            }
+            catch { }
+        }
+
+        private async Task ProcessErrorHandler(ProcessErrorEventArgs args)
         {
             Console.WriteLine(args.Exception.Message);
-            return Task.CompletedTask;
         }
     }
 }

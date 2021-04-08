@@ -15,12 +15,8 @@ namespace EE579.Core.Slices.Users.Mapping
         {
             CreateMap<CreateUserInput, User>()
                 .ForMember(x => x.Password, opts => opts.MapFrom(y => BCrypt.Net.BCrypt.HashPassword(y.Password)));
-            CreateMap<User, UserDto>()
-                .ForMember(x => x.Tenants, opts => opts.MapFrom(y => y.OwnedTenants.Concat(y.Tenants)));
-            CreateMap<Tenant, TenantDto>()
-                .ForMember(x => x.OwnerId, opts => opts.MapFrom(y => y.Owner));
-                
-           //CreateMap<ICollection<Tenant>, List<TenantDto>>();
+            CreateMap<User, UserDto>();
+            CreateMap<Tenant, TenantDto>();
         }
     }
 }

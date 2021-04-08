@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using EE579.Core.Infrastructure.Exceptions;
 using EE579.Core.Infrastructure.Exceptions.Models;
 
@@ -44,7 +45,7 @@ namespace EE579.Core.Slices.Auth.Impl
             return tokenHandler.WriteToken(token);
         }
 
-        public SessionDto Login(LoginInput input)
+        public async Task<SessionDto> Login(LoginInput input)
         {
             var user = _context.Users.FirstOrDefault(x => x.Email == input.Email);
             if (user == null) throw new Exception();
@@ -57,7 +58,7 @@ namespace EE579.Core.Slices.Auth.Impl
                 });
 
             user.RefreshToken = Guid.NewGuid();
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var userDto = _mapper.Map<UserDto>(user);
 
@@ -70,7 +71,7 @@ namespace EE579.Core.Slices.Auth.Impl
             return session;
         }
 
-        public SessionDto RefreshToken(RefreshTokenInput input)
+        public async Task<SessionDto> RefreshToken(RefreshTokenInput input)
         {
             throw new NotImplementedException();
         }

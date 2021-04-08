@@ -36,9 +36,9 @@ namespace EE579.Api.Controllers
         [HttpPost]
         [Route("/login")]
         [AllowAnonymous]
-        public SessionDto Login([FromBody] LoginInput input)
+        public async Task<SessionDto> Login([FromBody] LoginInput input)
         {
-            return _authService.Login(input);
+            return await _authService.Login(input);
         }
 
         /// <remarks>
@@ -46,7 +46,7 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [HttpPost]
         [Route("/refresh-token")]
-        public SessionDto RefreshSession([FromBody] RefreshTokenInput input)
+        public async Task<SessionDto> RefreshSession([FromBody] RefreshTokenInput input)
         {
             throw new NotImplementedException();
         }

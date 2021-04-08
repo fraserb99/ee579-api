@@ -17,13 +17,7 @@ namespace EE579.Domain.Entities
         public string Name { get; set; }
         public Guid RefreshToken { get; set; }
 
-        [InverseProperty("Owner")]
-        public virtual ICollection<Tenant> OwnedTenants { get; set; }
         public virtual ICollection<Tenant> Tenants { get; set; }
-
-        public IEnumerable<Tenant> GetTenants()
-        {
-            return OwnedTenants.Concat(Tenants);
-        }
+        public virtual List<TenantUser> TenantUsers { get; set; }
     }
 }

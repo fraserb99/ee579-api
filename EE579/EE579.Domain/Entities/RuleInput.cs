@@ -6,7 +6,7 @@ using EE579.Domain.Models;
 
 namespace EE579.Domain.Entities
 {
-    public class RuleInput : EntityWithGuid
+    public class RuleInput : EntityWithTenant<Guid>
     {
         public RuleInput(InputType type)
         {
