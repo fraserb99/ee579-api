@@ -11,6 +11,6 @@ namespace EE579.Core.Slices.Auth
     {
         public Task<SessionDto> Login(LoginInput input);
         public Task<SessionDto> RefreshToken(RefreshTokenInput input);
-        public string CreateToken(User user);
+        public Task<string> CreateToken(User user);
     }
 }

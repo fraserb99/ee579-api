@@ -9,11 +9,13 @@ using EE579.Domain.Entities.Inputs;
 using EE579.Domain.Entities.Output;
 using EE579.Domain.Extensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EE579.Domain
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         private readonly HttpContext _httpContext;
 
@@ -33,7 +35,6 @@ namespace EE579.Domain
         }
 
         public virtual DbSet<Tenant> Tenants { get; set; }
-        public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<TenantUser> TenantUsers { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Rule> Rules { get; set; }
@@ -57,6 +58,7 @@ namespace EE579.Domain
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Tenant>()
                 .HasMany(p => p.Users)
                 .WithMany(p => p.Tenants)
@@ -76,39 +78,33 @@ namespace EE579.Domain
 
             modelBuilder.Entity<TenantUser>()
                 .HasQueryFilter(x =>
-                    _httpContext.GetTenantId().HasValue
-                        ? x.TenantId == _httpContext.GetTenantId()
-                        : x.TenantId == Guid.NewGuid());
+                    !_httpContext.GetTenantId().HasValue ||
+                    x.TenantId == _httpContext.GetTenantId());
 
             modelBuilder.Entity<Device>()
                 .HasQueryFilter(x =>
-                    _httpContext.GetTenantId().HasValue
-                        ? x.TenantId == _httpContext.GetTenantId()
-                        : x.TenantId == Guid.NewGuid());
+                    !_httpContext.GetTenantId().HasValue ||
+                    x.TenantId == _httpContext.GetTenantId());
 
             modelBuilder.Entity<Rule>()
                 .HasQueryFilter(x =>
-                    _httpContext.GetTenantId().HasValue
-                        ? x.TenantId == _httpContext.GetTenantId()
-                        : x.TenantId == Guid.NewGuid());
+                    !_httpContext.GetTenantId().HasValue ||
+                    x.TenantId == _httpContext.GetTenantId());
 
             modelBuilder.Entity<DeviceGroup>()
                 .HasQueryFilter(x =>
-                    _httpContext.GetTenantId().HasValue
-                        ? x.TenantId == _httpContext.GetTenantId()
-                        : x.TenantId == Guid.NewGuid());
+                    !_httpContext.GetTenantId().HasValue ||
+                    x.TenantId == _httpContext.GetTenantId());
 
             modelBuilder.Entity<RuleInput>()
                 .HasQueryFilter(x =>
-                    _httpContext.GetTenantId().HasValue
-                        ? x.TenantId == _httpContext.GetTenantId()
-                        : x.TenantId == Guid.NewGuid());
+                    !_httpContext.GetTenantId().HasValue ||
+                    x.TenantId == _httpContext.GetTenantId());
 
             modelBuilder.Entity<RuleOutput>()
                 .HasQueryFilter(x =>
-                    _httpContext.GetTenantId().HasValue
-                        ? x.TenantId == _httpContext.GetTenantId()
-                        : x.TenantId == Guid.NewGuid());
+                    !_httpContext.GetTenantId().HasValue || 
+                    x.TenantId == _httpContext.GetTenantId());
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

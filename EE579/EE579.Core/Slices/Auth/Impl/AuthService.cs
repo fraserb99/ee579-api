@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EE579.Core.Infrastructure.Exceptions;
 using EE579.Core.Infrastructure.Exceptions.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace EE579.Core.Slices.Auth.Impl
 {
@@ -21,25 +22,28 @@ namespace EE579.Core.Slices.Auth.Impl
 
         private readonly DatabaseContext _context;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
-        public AuthService(DatabaseContext context, IMapper mapper)
+        public AuthService(DatabaseContext context, IMapper mapper, UserManager<User> userManager)
         {
             _context = context;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public string CreateToken(User user)
+        public async Task<string> CreateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes("zFXaqM10Dw55jz9SZla3EHl1jhcseBSClXhE0A2Q35HtXzTfGHQiNAqOB4MOOWb");
+            var claims = await _userManager.GetClaimsAsync(user);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
+                Subject = new ClaimsIdentity(claims.Concat(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),  
-                }),
+                    new Claim(ClaimTypes.Name, user.Id.ToString()), 
+                })),
                 Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
@@ -47,10 +51,15 @@ namespace EE579.Core.Slices.Auth.Impl
 
         public async Task<SessionDto> Login(LoginInput input)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Email == input.Email);
-            if (user == null) throw new Exception();
+            var user = await _userManager.FindByEmailAsync(input.Email);
+            if (user == null)
+                throw new FormErrorException(new List<FieldError>
+                {
+                    new FieldError("email", "Invalid email or password"),
+                    new FieldError("password", "Invalid email or password"),
+                });
 
-            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password)) 
+            if (!await _userManager.CheckPasswordAsync(user, input.Password))
                 throw new FormErrorException(new List<FieldError>
                 {
                     new FieldError("email", "Invalid email or password"),
@@ -64,7 +73,7 @@ namespace EE579.Core.Slices.Auth.Impl
 
             var session = new SessionDto { 
                 User = userDto,
-                Token = CreateToken(user),
+                Token = await CreateToken(user),
                 RefreshToken = user.RefreshToken
             };
 

@@ -17,6 +17,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using EE579.Api.Infrastructure.Middleware;
 using EE579.Api.Infrastructure.Swagger;
+using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,6 +33,9 @@ using EE579.Core.Slices.Tenants;
 using Microsoft.IdentityModel.Tokens;
 using EE579.Core.Slices.IotHub;
 using EE579.Core.Slices.IotHub.Impl;
+using EE579.Domain.Entities;
+using EE579.Domain.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace EE579.Api
 {
@@ -95,6 +99,9 @@ namespace EE579.Api
                 
             });
 
+            services.AddIdentity<User, IdentityRole<Guid>>()
+                .AddEntityFrameworkStores<DatabaseContext>();
+
             ConfigureAuth(services);
 
             services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
@@ -134,20 +141,18 @@ namespace EE579.Api
                 {
                     x.Events = new JwtBearerEvents
                     {
-                        OnTokenValidated = context =>
+                        OnTokenValidated = async context =>
                         {
                             var db = context.HttpContext.RequestServices.GetRequiredService<DatabaseContext>();
                             var userId = new Guid(context.Principal.Identity.Name);
 
-                            var user = db.Users.Find(userId);
-                            if (user == null)
+                            var tenantId = context.HttpContext.GetTenantId();
+                            var user = await db.Users.FindAsync(userId);
+                            if (user == null || tenantId.HasValue && !await db.TenantUsers.IgnoreQueryFilters().AnyAsync(x => x.UserId == userId && x.TenantId == tenantId))
                             {
                                 // return unauthorized if user no longer exists
                                 context.Fail("Unauthorized");
                             }
-
-
-                            return Task.CompletedTask;
                         }
 
                     };

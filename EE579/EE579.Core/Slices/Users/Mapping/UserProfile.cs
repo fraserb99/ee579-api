@@ -13,10 +13,13 @@ namespace EE579.Core.Slices.Users.Mapping
     {
         public UserProfile()
         {
-            CreateMap<CreateUserInput, User>()
-                .ForMember(x => x.Password, opts => opts.MapFrom(y => BCrypt.Net.BCrypt.HashPassword(y.Password)));
-            CreateMap<User, UserDto>();
+            CreateMap<CreateUserInput, User>();
+            CreateMap<User, UserDto>()
+                .ForMember(x => x.Name, opts => opts.MapFrom(y => y.UserName));
             CreateMap<Tenant, TenantDto>();
+
+            CreateMap<User, Guid>()
+                .ConvertUsing(x => x.Id);
         }
     }
 }
