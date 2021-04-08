@@ -9,25 +9,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using EE579.Core.Infrastructure.Exceptions;
 using EE579.Core.Infrastructure.Exceptions.Models;
 using EE579.Core.Slices.Tenants.Models;
 using EE579.Core.Infrastructure.Services;
+using EE579.Domain.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace EE579.Core.Slices.Users.Impl
 {
-    public class UserService : CrudAppService<User, UserInput>, IUserService
+    public class UserService : IUserService
     {
         private readonly IAuthService _authService;
         private readonly ICurrentUser _currentUser;
-        public UserService(IMapper mapper, DatabaseContext context, IAuthService authService, ICurrentUser currentUser)
-            : base(context, mapper)
+        private readonly DatabaseContext _context;
+        private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
+
+        public UserService(IMapper mapper, DatabaseContext context, IAuthService authService, ICurrentUser currentUser, UserManager<User> userManager)
         {
+            _mapper = mapper;
+            _context = context;
             _authService = authService;
             _currentUser = currentUser;
+            _userManager = userManager;
         }
 
-        public SessionDto Create(CreateUserInput input)
+        public async Task<SessionDto> Create(CreateUserInput input)
         {
             if (input.Password != input.PasswordConfirm)
                 throw new FormErrorException(new List<FieldError>
@@ -35,28 +45,41 @@ namespace EE579.Core.Slices.Users.Impl
                     new FieldError("password", "Passwords must match"),
                     new FieldError("passwordConfirm", "Passwords must match")
                 });
-            if (Repository.Users.FirstOrDefault(x => x.Email == input.Email) != null)
+            if (await _context.Users.AnyAsync(x => x.Email == input.Email))
                 throw new FormErrorException(new FieldError("email", "This email has already been used"));
 
             Regex regex = new Regex(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
             Match match = regex.Match(input.Email);
-            if (!match.Success) throw new FormErrorException(new FieldError("email", "The email is invalid"));
+            if (!match.Success)
+                throw new FormErrorException(new FieldError("email", "The email is invalid"));
 
-            var user = Mapper.Map<User>(input);
-            user.OwnedTenants = new List<Tenant> {
-                new Tenant {
-                    Name = $"{user.Name}'s Tenant"
-                }
+            var user = new User
+            {
+                UserName = input.Name,
+                Email = input.Email,
+                RefreshToken = Guid.NewGuid(),
             };
+            var result = await _userManager.CreateAsync(user, input.Password);
 
+            if (!result.Succeeded)
+                throw new FormErrorException(new FieldError("email", "There was an error creating your account, please try again"));
 
-            user.RefreshToken = Guid.NewGuid();
+            await _context.AddAsync(new Tenant
+            {
+                Name = $"{input.Name}'s Tenant",
+                TenantUsers = new List<TenantUser>
+                {
+                    new TenantUser
+                    {
+                        User = user,
+                        Role = Role.Owner
+                    }
+                }
+            });
+            await _context.SaveChangesAsync();
 
-            Repository.Users.Add(user);
-            Repository.SaveChanges();
-
-            var token = _authService.CreateToken(user);
-            var userDto = Mapper.Map<UserDto>(user);
+            var token = await _authService.CreateToken(user);
+            var userDto = _mapper.Map<UserDto>(user);
             var session = new SessionDto
             {
                 User = userDto,
@@ -67,27 +90,39 @@ namespace EE579.Core.Slices.Users.Impl
             return session;
         }
 
-        public IEnumerable<TenantDto> GetTenants()
+        public async Task<IEnumerable<TenantDto>> GetTenants()
         {
-            var currentUser = _currentUser.Get();
+            var currentUser = await _currentUser.Get();
 
-            var tenants = currentUser.GetTenants();
-            var tenantDtos = Mapper.Map<List<TenantDto>>(tenants);
+            var tenants = currentUser.Tenants;
+            var tenantDtos = _mapper.Map<List<TenantDto>>(tenants);
 
             return tenantDtos;
         }
 
-        public override void Delete(Guid id)
+        public Task<User> Update(Guid id, UserInput input)
         {
             throw new NotImplementedException();
         }
-        public override User Create(UserInput input)
+
+        public async Task Delete(Guid id)
         {
             throw new NotImplementedException();
         }
-        protected override void ValidateInput(UserInput input, User entity = null)
+
+        public Task<List<User>> GetAll()
         {
-            base.ValidateInput(input, entity);
+            throw new NotImplementedException();
+        }
+
+        public Task<User> GetById(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<User> Create(UserInput input)
+        {
+            throw new NotImplementedException();
         }
     }
 }

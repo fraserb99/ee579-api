@@ -32,16 +32,16 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Allows a user to create an account. This will also create an initial tenant for them as well
         /// </remarks>
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(SessionDto), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [AllowAnonymous]
         [HttpPost]
         [Route("create")]
-        public SessionDto Create([FromBody] CreateUserInput input)
+        public async Task<IActionResult> Create([FromBody] CreateUserInput input)
         {
-            var sessionDto = _userService.Create(input);
+            var sessionDto = await _userService.Create(input);
 
-            return sessionDto;
+            return Created("", sessionDto);
         }
 
         /// <remarks>
@@ -51,9 +51,9 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{userId}")]
-        public UserDto Update(Guid userId, [FromBody] UserInput input)
+        public async Task<UserDto> Update(Guid userId, [FromBody] UserInput input)
         {
-            var user = _userService.Update(userId, input);
+            var user = await _userService.Update(userId, input);
             var userDto = _mapper.Map<UserDto>(user);
             return userDto;
         }

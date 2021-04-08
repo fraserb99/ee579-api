@@ -18,14 +18,6 @@ namespace EE579.Core.Infrastructure.Extensions
             return new Guid(id);
         }
 
-        public static Guid GetTenantId(this HttpContext context)
-        {
-            var exists = context.Request.Headers.TryGetValue("tenant-id", out var header);
-            if (!exists) throw new Exception();
-            
-            return new Guid(header.FirstOrDefault());
-        }
-
         public static IPAddress GetIpAddress(this HttpContext context)
         {
             return context.Connection.RemoteIpAddress; //var ip = context.Request.Headers

@@ -2,6 +2,7 @@
 using EE579.Core.Infrastructure.Extensions;
 using EE579.Domain;
 using EE579.Domain.Entities;
+using EE579.Domain.Extensions;
 using Microsoft.AspNetCore.Http;
 
 namespace EE579.Core.Slices.Tenants
@@ -16,7 +17,7 @@ namespace EE579.Core.Slices.Tenants
             _db = db;
         }
 
-        public Guid GetId()
+        public Guid? GetId()
         {
             return _httpContext.GetTenantId();
         }

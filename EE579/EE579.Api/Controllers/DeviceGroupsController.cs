@@ -23,7 +23,7 @@ namespace EE579.Api.Controllers
         /// Gets a list of device groups belonging to the current tenant
         /// </remarks>
         [HttpGet]
-        public ApiList<DeviceGroupDto> Get()
+        public async Task<ApiList<DeviceGroupDto>> Get()
         {
             throw new NotImplementedException();
         }
@@ -34,7 +34,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public DeviceGroupDto Create([FromBody] DeviceGroupInput input)
+        public async Task<DeviceGroupDto> Create([FromBody] DeviceGroupInput input)
         {
             throw new NotImplementedException();
         }
@@ -46,7 +46,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [Route("{groupId}")]
         [HttpPut]
-        public DeviceGroupDto Update(string groupId, [FromBody] DeviceGroupInput input)
+        public async Task<DeviceGroupDto> Update(string groupId, [FromBody] DeviceGroupInput input)
         {
             throw new NotImplementedException();
         }
@@ -57,7 +57,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPost]
         [Route("{groupId}/add-device/{deviceId}")]
-        public DeviceGroupDto AddDevice(string groupId, string deviceId)
+        public async Task<DeviceGroupDto> AddDevice(string groupId, string deviceId)
         {
             throw new NotImplementedException();
         }
@@ -68,7 +68,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
         [Route("{groupId}/devices/{deviceId}")]
-        public void RemoveDevice(Guid groupId, Guid deviceId)
+        public async Task RemoveDevice(Guid groupId, Guid deviceId)
         {
 
         }
@@ -79,7 +79,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [Route("{groupId}")]
         [HttpDelete]
-        public void Delete(string groupId)
+        public async Task Delete(string groupId)
         {
 
         }

@@ -26,7 +26,7 @@ namespace EE579.Api.Controllers
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(RuleExample))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
-        public ApiList<RuleDto> Get()
+        public async Task<ApiList<RuleDto>> Get()
         {
             throw new NotImplementedException();
         }
@@ -38,7 +38,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public RuleDto Create([FromBody] RuleInputDto input)
+        public async Task<RuleDto> Create([FromBody] RuleInputDto input)
         {
             throw new NotImplementedException();
         }
@@ -51,7 +51,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{ruleId}")]
-        public RuleDto Update(string ruleId, [FromBody] RuleInputDto input)
+        public async Task<RuleDto> Update(string ruleId, [FromBody] RuleInputDto input)
         {
             throw new NotImplementedException();
         }
@@ -62,7 +62,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
         [Route("{ruleId}")]
-        public void Delete(string ruleId)
+        public async Task Delete(string ruleId)
         {
             throw new NotImplementedException();
         }

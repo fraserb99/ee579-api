@@ -1,9 +1,10 @@
-﻿using EE579.Domain.Entities;
+﻿using System.Threading.Tasks;
+using EE579.Domain.Entities;
 
 namespace EE579.Core.Slices.Users
 {
     public interface ICurrentUser
     {
-        public User Get();
+        public Task<User> Get();
     }
 }

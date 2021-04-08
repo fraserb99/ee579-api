@@ -5,7 +5,7 @@ namespace EE579.Core.Slices.Tenants
 {
     public interface ICurrentTenant
     {
-        public Guid GetId();
+        public Guid? GetId();
         public Tenant Get();
     }
 }

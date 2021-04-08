@@ -39,7 +39,7 @@ namespace EE579.Api.Controllers
         /// Gets a list of devices belonging to the current tenant
         /// </remarks>
         [HttpGet]
-        public ApiList<DeviceDto> Get()
+        public async Task<ApiList<DeviceDto>> Get()
         {
             throw new NotImplementedException();
         }
@@ -81,9 +81,9 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{deviceId}")]
-        public ActionResult Update([FromBody] DeviceInput input, string deviceId)
+        public async Task<IActionResult> Update([FromBody] DeviceInput input, string deviceId)
         {
-            var device = _deviceService.Update(deviceId, input);
+            var device = await _deviceService.Update(deviceId, input);
 
             return Ok(new ApiList<DeviceDto>(_mapper.Map<DeviceDto>(device)));
         }
@@ -94,7 +94,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPut]
         [Route("{deviceId}/move-tenant/{newTenantId}")]
-        public DeviceDto Update(Guid deviceId, Guid newTenantId)
+        public async Task<DeviceDto> Update(Guid deviceId, Guid newTenantId)
         {
             throw new NotImplementedException();
         }
@@ -105,7 +105,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
         [Route("{deviceId}/unclaim")]
-        public void Delete()
+        public async Task Delete()
         {
             throw new NotImplementedException();
         }
@@ -113,9 +113,9 @@ namespace EE579.Api.Controllers
       
         [HttpPost]
         [Route("dk")]
-        public ActionResult IotTest()
+        public async Task<IActionResult> IotTest()
         {
-            _messagingService.SendMessage("00:0a:95:9d:68:16", new Dictionary<string, string>(), "dk");
+            await _messagingService.SendMessage("00:0a:95:9d:68:16", new Dictionary<string, string>(), "dk");
             return Ok();
         }
     }

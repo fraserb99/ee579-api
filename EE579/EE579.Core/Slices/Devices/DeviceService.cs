@@ -18,7 +18,7 @@ using Device = EE579.Domain.Entities.Device;
 
 namespace EE579.Core.Slices.Devices
 {
-    public class DeviceService : CrudAppServiceBase<Device, DeviceInput, string>, IDeviceService
+    public class DeviceService : CrudAppServiceWithIdType<Device, DeviceInput, string>, IDeviceService
     {
         private readonly RegistryManager _registry;
 
@@ -40,7 +40,7 @@ namespace EE579.Core.Slices.Devices
         }
         public async Task<DeviceRegistrationDto> Register(string deviceId)
         {
-            var device = GetById(deviceId);
+            var device = await GetById(deviceId);
 
             Microsoft.Azure.Devices.Device hubDevice;
 
@@ -61,12 +61,8 @@ namespace EE579.Core.Slices.Devices
                 device.IpAddress = _httpContext.GetIpAddress().ToString();
                 await Repository.SaveChangesAsync();
 
-                hubDevice = await _registry.GetDeviceAsync(deviceId);
-
-                if (hubDevice == null)
-                {
-                    hubDevice = await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
-                }
+                hubDevice = await _registry.GetDeviceAsync(deviceId) ??
+                            await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
             }
 
             return new DeviceRegistrationDto
@@ -86,7 +82,7 @@ namespace EE579.Core.Slices.Devices
             return await devices.ToListAsync();
         }
 
-        protected override void ValidateInput(DeviceInput input, Device entity = null)
+        protected override async Task ValidateInputAsync(DeviceInput input, Device entity = null)
         {
             if (entity != null && entity.DeviceState == DeviceState.Unclaimed)
             {

@@ -9,7 +9,7 @@ using EE579.Domain.Entities;
 
 namespace EE579.Core.Slices.Devices
 {
-    public interface IDeviceService : ICrudAppServiceBase<Device, DeviceInput, string>
+    public interface IDeviceService : ICrudAppService<Device, DeviceInput, DeviceInput, string>
     {
         public Task<DeviceRegistrationDto> Register(string deviceId);
         public Task<IEnumerable<Device>> GetUnclaimed();
