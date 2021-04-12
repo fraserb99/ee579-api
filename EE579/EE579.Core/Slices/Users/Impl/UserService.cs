@@ -75,7 +75,7 @@ namespace EE579.Core.Slices.Users.Impl
 
             if (!result.Succeeded)
                 throw new FormErrorException(new FieldError("email", "There was an error creating your account, please try again"));
-            _signInManager.ExternalLoginSignInAsync()
+
             await _context.AddAsync(new Tenant
             {
                 Name = $"{input.Name}'s Tenant",
