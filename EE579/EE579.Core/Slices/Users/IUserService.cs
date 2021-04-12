@@ -12,7 +12,8 @@ namespace EE579.Core.Slices.Users
 {
     public interface IUserService : ICrudAppService<User, UserInput>
     {
-        public Task<SessionDto> Create(CreateUserInput input);
+        public Task Create(CreateUserInput input);
         public Task<IEnumerable<TenantDto>> GetTenants();
+        public Task ConfirmEmail(string userId, string token);
     }
 }

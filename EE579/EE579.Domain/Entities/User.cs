@@ -12,6 +12,7 @@ namespace EE579.Domain.Entities
     {
         public Guid RefreshToken { get; set; }
 
+        public string Name { get; set; }
         public virtual ICollection<Tenant> Tenants { get; set; }
         public virtual List<TenantUser> TenantUsers { get; set; }
     }
