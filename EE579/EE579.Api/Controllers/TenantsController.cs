@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
+using EE579.Core.Slices.Tenants;
 using EE579.Core.Slices.Tenants.Models;
 using EE579.Core.Slices.Users;
+using EE579.Domain.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,10 +23,12 @@ namespace EE579.Api.Controllers
     public class TenantsController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ITenantService _tenantService;
 
-        public TenantsController(IUserService userService)
+        public TenantsController(IUserService userService, ITenantService tenantService)
         {
             _userService = userService;
+            _tenantService = tenantService;
         }
         /// <remarks>
         /// Gets a list of tenants the user can access
@@ -79,11 +83,13 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
+        [RequiresTenant]
         [HttpPost]
-        [Route("{tenantId}")]
+        [Route("invite")]
         public async Task Invite([FromBody] InviteInput input)
         {
-
+           var tenantId = HttpContext.GetTenantId();
+           await _tenantService.Invite(input, tenantId.Value);
         }
 
         /// <remarks>

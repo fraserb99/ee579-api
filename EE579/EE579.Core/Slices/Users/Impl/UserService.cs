@@ -72,7 +72,7 @@ namespace EE579.Core.Slices.Users.Impl
             };
             var result = await _userManager.CreateAsync(user, input.Password);
             user = await _userManager.FindByIdAsync(user.Id.ToString());
-
+            
             if (!result.Succeeded)
                 throw new FormErrorException(new FieldError("email", "There was an error creating your account, please try again"));
 

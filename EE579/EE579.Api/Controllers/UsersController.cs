@@ -18,7 +18,7 @@ using Microsoft.Extensions.Options;
 
 namespace EE579.Api.Controllers
 {
-    [RequiresTenant]
+    
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
