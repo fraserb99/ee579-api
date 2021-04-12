@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -18,6 +19,7 @@ using System.Threading.Tasks;
 using EE579.Api.Infrastructure.Middleware;
 using EE579.Api.Infrastructure.Swagger;
 using EE579.Core.Infrastructure.Extensions;
+using EE579.Core.Infrastructure.Settings;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,6 +31,7 @@ using EE579.Core.Slices.Users.Impl;
 using EE579.Core.Slices.Auth;
 using EE579.Core.Slices.Auth.Impl;
 using EE579.Core.Slices.Devices;
+using EE579.Core.Slices.Email;
 using EE579.Core.Slices.Tenants;
 using Microsoft.IdentityModel.Tokens;
 using EE579.Core.Slices.IotHub;
@@ -36,6 +39,7 @@ using EE579.Core.Slices.IotHub.Impl;
 using EE579.Domain.Entities;
 using EE579.Domain.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace EE579.Api
 {
@@ -51,7 +55,6 @@ namespace EE579.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             ConfigureEfCore(services);
             services.AddControllers(opts => 
                     opts.Filters.Add(new HttpStatusCodeExceptionFilter()
@@ -99,8 +102,12 @@ namespace EE579.Api
                 
             });
 
-            services.AddIdentity<User, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<DatabaseContext>();
+            services.AddIdentity<User, IdentityRole<Guid>>(options =>
+                {
+                    options.SignIn.RequireConfirmedEmail = true;
+                })
+                .AddEntityFrameworkStores<DatabaseContext>()
+                .AddDefaultTokenProviders();
 
             ConfigureAuth(services);
 
@@ -120,6 +127,10 @@ namespace EE579.Api
             services.AddTransient<IDeviceService, DeviceService>();
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<ICurrentTenant, CurrentTenant>();
+            services.AddTransient<IEmailService, EmailService>();
+
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
         }
 
         private void ConfigureEfCore(IServiceCollection services)
@@ -136,6 +147,11 @@ namespace EE579.Api
                 {
                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = "394944070114-das844gmn89hk3t9npp62680n52tjtlu.apps.googleusercontent.com";
+                    options.ClientSecret = "2V9Izcr_NV0aLBHCtjrwJfp4";
                 })
                 .AddJwtBearer(x =>
                 {
@@ -165,6 +181,24 @@ namespace EE579.Api
                         ValidateIssuer = false,
                         ValidateAudience = false,
                         ValidateLifetime = false
+                    };
+                })
+                .AddOpenIdConnect("microsoft-oidc", "Microsoft", options =>
+                {
+                    options.SaveTokens = true;
+
+                    options.Authority = "https://login.microsoftonline.com/common/v2.0";
+                    options.ClientId = "2cd06fdd-20cd-4981-8d9e-11862ce58b37";
+                    options.ClientSecret = "6S.j186kX0Rbko.rD~b4-LVplDGA~~I3pf";
+                    options.ResponseType = "id_token";
+                    options.GetClaimsFromUserInfoEndpoint = true;
+                    options.Scope.Add(OpenIdConnectScope.Email);
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = "name",
+                        RoleClaimType = "role",
+                        ValidateIssuer = false
                     };
                 });
         }

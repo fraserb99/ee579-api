@@ -14,8 +14,7 @@ namespace EE579.Core.Slices.Users.Mapping
         public UserProfile()
         {
             CreateMap<CreateUserInput, User>();
-            CreateMap<User, UserDto>()
-                .ForMember(x => x.Name, opts => opts.MapFrom(y => y.UserName));
+            CreateMap<User, UserDto>();
             CreateMap<Tenant, TenantDto>();
 
             CreateMap<User, Guid>()

@@ -10,13 +10,18 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using EE579.Core.Infrastructure.Exceptions;
 using EE579.Core.Infrastructure.Exceptions.Models;
 using EE579.Core.Slices.Tenants.Models;
 using EE579.Core.Infrastructure.Services;
+using EE579.Core.Infrastructure.Settings;
+using EE579.Core.Slices.Email;
+using EE579.Core.Slices.Email.Models;
 using EE579.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace EE579.Core.Slices.Users.Impl
 {
@@ -27,17 +32,22 @@ namespace EE579.Core.Slices.Users.Impl
         private readonly DatabaseContext _context;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly IEmailService _emailService;
+        private readonly AppSettings _appSettings;
+        private readonly SignInManager<User> _signInManager;
 
-        public UserService(IMapper mapper, DatabaseContext context, IAuthService authService, ICurrentUser currentUser, UserManager<User> userManager)
+        public UserService(IMapper mapper, DatabaseContext context, IAuthService authService, ICurrentUser currentUser, UserManager<User> userManager, IEmailService emailService, IOptions<AppSettings> options)
         {
             _mapper = mapper;
             _context = context;
             _authService = authService;
             _currentUser = currentUser;
             _userManager = userManager;
+            _emailService = emailService;
+            _appSettings = options.Value;
         }
 
-        public async Task<SessionDto> Create(CreateUserInput input)
+        public async Task Create(CreateUserInput input)
         {
             if (input.Password != input.PasswordConfirm)
                 throw new FormErrorException(new List<FieldError>
@@ -52,14 +62,16 @@ namespace EE579.Core.Slices.Users.Impl
             Match match = regex.Match(input.Email);
             if (!match.Success)
                 throw new FormErrorException(new FieldError("email", "The email is invalid"));
-
+            
             var user = new User
             {
-                UserName = input.Name,
+                UserName = input.Email,
                 Email = input.Email,
+                Name = input.Name,
                 RefreshToken = Guid.NewGuid(),
             };
             var result = await _userManager.CreateAsync(user, input.Password);
+            user = await _userManager.FindByIdAsync(user.Id.ToString());
 
             if (!result.Succeeded)
                 throw new FormErrorException(new FieldError("email", "There was an error creating your account, please try again"));
@@ -77,17 +89,9 @@ namespace EE579.Core.Slices.Users.Impl
                 }
             });
             await _context.SaveChangesAsync();
+            var confirmEmailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            var token = await _authService.CreateToken(user);
-            var userDto = _mapper.Map<UserDto>(user);
-            var session = new SessionDto
-            {
-                User = userDto,
-                Token = token,
-                RefreshToken = user.RefreshToken
-            };
-
-            return session;
+            await _emailService.SendEmail(user.Email, new EmailConfirmationEmail(user, confirmEmailToken, _appSettings.ApiUrl));
         }
 
         public async Task<IEnumerable<TenantDto>> GetTenants()
@@ -98,6 +102,16 @@ namespace EE579.Core.Slices.Users.Impl
             var tenantDtos = _mapper.Map<List<TenantDto>>(tenants);
 
             return tenantDtos;
+        }
+
+        public async Task ConfirmEmail(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var decoded = HttpUtility.UrlDecode(token);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (!result.Succeeded)
+                throw new Exception();
         }
 
         public Task<User> Update(Guid id, UserInput input)
