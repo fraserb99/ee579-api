@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EE579.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace EE579.Core.Slices.Tenants.Models
     {
         [Required]
         public string Email { get; set; }
+        public Role Role { get; set; }
     }
 }
