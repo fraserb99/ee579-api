@@ -6,6 +6,7 @@ using AutoMapper;
 using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Infrastructure.Settings;
+using EE579.Core.Models;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Core.Slices.Users;
 using EE579.Core.Slices.Users.Models;
@@ -33,6 +34,22 @@ namespace EE579.Api.Controllers
             _mapper = mapper;
             _settings = appSettings.Value;
         }
+
+        /// <remarks>
+        /// Gets all users that have access to the current tenant
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
+        [RequiresTenant]
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var users = await _userService.GetAll();
+            var dtos = _mapper.Map<List<UserDto>>(users);
+
+            return Ok(new ApiList<UserDto>(dtos));
+        }
+
         /// <remarks>
         /// Allows a user to create an account. This will also create an initial tenant for them as well
         /// </remarks>
@@ -62,7 +79,11 @@ namespace EE579.Api.Controllers
             return userDto;
         }
 
+        /// <remarks>
+        /// The verification email will include a link to this endpoint, with a token verifying that the user is the owner of the email address
+        /// </remarks>
         [AllowAnonymous]
+        [HttpGet]
         [Route("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {

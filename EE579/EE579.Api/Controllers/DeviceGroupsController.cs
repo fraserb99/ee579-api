@@ -22,6 +22,7 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Gets a list of device groups belonging to the current tenant
         /// </remarks>
+        [RequiresTenant]
         [HttpGet]
         public async Task<ApiList<DeviceGroupDto>> Get()
         {
@@ -33,6 +34,7 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
+        [RequiresTenant]
         [HttpPost]
         public async Task<DeviceGroupDto> Create([FromBody] DeviceGroupInput input)
         {
@@ -44,6 +46,7 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
+        [RequiresTenant]
         [Route("{groupId}")]
         [HttpPut]
         public async Task<DeviceGroupDto> Update(string groupId, [FromBody] DeviceGroupInput input)
@@ -55,6 +58,7 @@ namespace EE579.Api.Controllers
         /// Add a device to a group
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [RequiresTenant]
         [HttpPost]
         [Route("{groupId}/add-device/{deviceId}")]
         public async Task<DeviceGroupDto> AddDevice(string groupId, string deviceId)
@@ -66,6 +70,7 @@ namespace EE579.Api.Controllers
         /// Remove a device from a group
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [RequiresTenant]
         [HttpDelete]
         [Route("{groupId}/devices/{deviceId}")]
         public async Task RemoveDevice(Guid groupId, Guid deviceId)
@@ -77,6 +82,7 @@ namespace EE579.Api.Controllers
         /// Deletes a device group
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [RequiresTenant]
         [Route("{groupId}")]
         [HttpDelete]
         public async Task Delete(string groupId)

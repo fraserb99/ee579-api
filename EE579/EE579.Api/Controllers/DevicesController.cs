@@ -38,6 +38,7 @@ namespace EE579.Api.Controllers
         /// <remarks>
         /// Gets a list of devices belonging to the current tenant
         /// </remarks>
+        [RequiresTenant]
         [HttpGet]
         public async Task<ApiList<DeviceDto>> Get()
         {
@@ -80,6 +81,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(ApiList<DeviceDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
+        [RequiresTenant]
         [Route("{deviceId}")]
         public async Task<IActionResult> Update([FromBody] DeviceInput input, string deviceId)
         {
@@ -92,6 +94,7 @@ namespace EE579.Api.Controllers
         /// Used to move a device to a new tenant. This will also remove the device from any rules on the previous tenant
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [RequiresTenant]
         [HttpPut]
         [Route("{deviceId}/move-tenant/{newTenantId}")]
         public async Task<DeviceDto> Update(Guid deviceId, Guid newTenantId)
@@ -103,6 +106,7 @@ namespace EE579.Api.Controllers
         /// Removes the device and all of it's rule integrations from the current tenant. This will allow it to be claimed by another tenant
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [RequiresTenant]
         [HttpDelete]
         [Route("{deviceId}/unclaim")]
         public async Task Delete()

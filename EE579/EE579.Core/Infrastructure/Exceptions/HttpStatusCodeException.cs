@@ -9,6 +9,12 @@ namespace EE579.Core.Infrastructure.Exceptions
             Status = status;
         }
 
+        public HttpStatusCodeException(int status, string body)
+        {
+            Status = status;
+            Body = body;
+        }
+
         public int Status { get; set; }
         public object Body { get; set; }
 

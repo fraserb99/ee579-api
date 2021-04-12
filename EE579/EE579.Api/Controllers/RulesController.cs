@@ -25,6 +25,7 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(RuleExample))]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [RequiresTenant]
         [HttpGet]
         public async Task<ApiList<RuleDto>> Get()
         {
@@ -37,6 +38,7 @@ namespace EE579.Api.Controllers
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(RuleExample))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
+        [RequiresTenant]
         [HttpPost]
         public async Task<RuleDto> Create([FromBody] RuleInputDto input)
         {
@@ -49,6 +51,7 @@ namespace EE579.Api.Controllers
         [SwaggerResponseExample(StatusCodes.Status200OK, typeof(RuleExample))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
+        [RequiresTenant]
         [HttpPut]
         [Route("{ruleId}")]
         public async Task<RuleDto> Update(string ruleId, [FromBody] RuleInputDto input)
@@ -61,6 +64,7 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
+        [RequiresTenant]
         [Route("{ruleId}")]
         public async Task Delete(string ruleId)
         {
