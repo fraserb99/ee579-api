@@ -16,6 +16,9 @@ namespace EE579.Core.Slices.Users.Mapping
             CreateMap<CreateUserInput, User>();
             CreateMap<User, UserDto>();
             CreateMap<Tenant, TenantDto>();
+            CreateMap<TenantUser, UserDto>()
+                .IncludeMembers(x => x.User);
+            CreateMap<UserInput, TenantUser>();
 
             CreateMap<User, Guid>()
                 .ConvertUsing(x => x.Id);

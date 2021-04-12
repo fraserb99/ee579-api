@@ -18,7 +18,9 @@ using EE579.Core.Infrastructure.Services;
 using EE579.Core.Infrastructure.Settings;
 using EE579.Core.Slices.Email;
 using EE579.Core.Slices.Email.Models;
+using EE579.Domain.Extensions;
 using EE579.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -35,8 +37,16 @@ namespace EE579.Core.Slices.Users.Impl
         private readonly IEmailService _emailService;
         private readonly AppSettings _appSettings;
         private readonly SignInManager<User> _signInManager;
+        private readonly HttpContext _httpContext;
 
-        public UserService(IMapper mapper, DatabaseContext context, IAuthService authService, ICurrentUser currentUser, UserManager<User> userManager, IEmailService emailService, IOptions<AppSettings> options)
+        public UserService(IMapper mapper, 
+            DatabaseContext context,
+            IAuthService authService,
+            ICurrentUser currentUser,
+            UserManager<User> userManager,
+            IEmailService emailService,
+            IOptions<AppSettings> options,
+            IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _context = context;
@@ -45,6 +55,7 @@ namespace EE579.Core.Slices.Users.Impl
             _userManager = userManager;
             _emailService = emailService;
             _appSettings = options.Value;
+            _httpContext = httpContextAccessor.HttpContext;
         }
 
         public async Task Create(CreateUserInput input)
@@ -55,23 +66,34 @@ namespace EE579.Core.Slices.Users.Impl
                     new FieldError("password", "Passwords must match"),
                     new FieldError("passwordConfirm", "Passwords must match")
                 });
-            if (await _context.Users.AnyAsync(x => x.Email == input.Email))
+            if (await _context.Users.AnyAsync(x => x.Email == input.Email && x.PasswordHash != null))
                 throw new FormErrorException(new FieldError("email", "This email has already been used"));
 
             Regex regex = new Regex(@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
             Match match = regex.Match(input.Email);
             if (!match.Success)
                 throw new FormErrorException(new FieldError("email", "The email is invalid"));
-            
-            var user = new User
+
+            IdentityResult result;
+            var user = await _userManager.FindByEmailAsync(input.Email);
+            if (user != null)
             {
-                UserName = input.Email,
-                Email = input.Email,
-                Name = input.Name,
-                RefreshToken = Guid.NewGuid(),
-            };
-            var result = await _userManager.CreateAsync(user, input.Password);
-            user = await _userManager.FindByIdAsync(user.Id.ToString());
+                user.Name = input.Name;
+                user.RefreshToken = Guid.NewGuid();
+                result = await _userManager.AddPasswordAsync(user, input.Password);
+            }
+            else
+            {
+                user = new User
+                {
+                    UserName = input.Email,
+                    Email = input.Email,
+                    Name = input.Name,
+                    RefreshToken = Guid.NewGuid(),
+                };
+                result = await _userManager.CreateAsync(user, input.Password);
+                user = await _userManager.FindByIdAsync(user.Id.ToString());
+            }
 
             if (!result.Succeeded)
                 throw new FormErrorException(new FieldError("email", "There was an error creating your account, please try again"));
@@ -114,9 +136,14 @@ namespace EE579.Core.Slices.Users.Impl
                 throw new Exception();
         }
 
-        public Task<User> Update(Guid id, UserInput input)
+        public async Task<UserDto> Update(Guid id, UserInput input)
         {
-            throw new NotImplementedException();
+            var tenantUser = await _context.TenantUsers.FindAsync(new[] {_httpContext.GetTenantId(), id});
+
+            tenantUser = _mapper.Map(input, tenantUser);
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<UserDto>(tenantUser);
         }
 
         public async Task Delete(Guid id)
@@ -124,17 +151,16 @@ namespace EE579.Core.Slices.Users.Impl
             throw new NotImplementedException();
         }
 
-        public Task<List<User>> GetAll()
+        public async Task<List<UserDto>> GetAll()
         {
-            throw new NotImplementedException();
+            var tenantUsers = await _context.TenantUsers.Include(x => x.User).ToListAsync();
+
+            var userDtos = _mapper.Map<List<UserDto>>(tenantUsers);
+
+            return userDtos;
         }
 
-        public Task<User> GetById(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<User> Create(UserInput input)
+        public Task<UserDto> GetById(Guid id)
         {
             throw new NotImplementedException();
         }
