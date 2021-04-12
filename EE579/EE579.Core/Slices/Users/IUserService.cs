@@ -10,10 +10,14 @@ using EE579.Domain.Entities;
 
 namespace EE579.Core.Slices.Users
 {
-    public interface IUserService : ICrudAppService<User, UserInput>
+    public interface IUserService
     {
         public Task Create(CreateUserInput input);
         public Task<IEnumerable<TenantDto>> GetTenants();
         public Task ConfirmEmail(string userId, string token);
+        public Task<List<UserDto>> GetAll();
+        public Task<UserDto> GetById(Guid id);
+        public Task<UserDto> Update(Guid id, UserInput input);
+        public Task Delete(Guid id);
     }
 }

@@ -18,7 +18,6 @@ using Microsoft.Extensions.Options;
 
 namespace EE579.Api.Controllers
 {
-    
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
@@ -45,9 +44,8 @@ namespace EE579.Api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var users = await _userService.GetAll();
-            var dtos = _mapper.Map<List<UserDto>>(users);
 
-            return Ok(new ApiList<UserDto>(dtos));
+            return Ok(new ApiList<UserDto>(users));
         }
 
         /// <remarks>
