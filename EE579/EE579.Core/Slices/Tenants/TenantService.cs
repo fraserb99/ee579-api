@@ -11,9 +11,13 @@ using EE579.Core.Slices.Email;
 using EE579.Core.Slices.Email.Models;
 using EE579.Core.Slices.Tenants.Models;
 using EE579.Core.Slices.Users;
+using EE579.Core.Slices.Users.Models;
 using EE579.Domain;
 using EE579.Domain.Entities;
+using EE579.Domain.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace EE579.Core.Slices.Tenants
@@ -25,8 +29,9 @@ namespace EE579.Core.Slices.Tenants
         private readonly IEmailService _emailService;
         private readonly ICurrentUser _currentUser;
         private readonly AppSettings _appSettings;
+        private readonly HttpContext _httpContext;
         
-        public TenantService(DatabaseContext context, IMapper mapper, UserManager<User> userManager, IEmailService emailService, ICurrentUser currentUser, IOptions<AppSettings> options) 
+        public TenantService(DatabaseContext context, IMapper mapper, UserManager<User> userManager, IEmailService emailService, ICurrentUser currentUser, IOptions<AppSettings> options, IHttpContextAccessor httpContextAccessor) 
             : base(context, mapper)
         {
             _emailService = emailService;
@@ -34,6 +39,7 @@ namespace EE579.Core.Slices.Tenants
             _userManager = userManager;
             _currentUser = currentUser;
             _appSettings = options.Value;
+            _httpContext = httpContextAccessor.HttpContext;
         }
 
         public IEnumerable<TenantDto> Get()
@@ -41,7 +47,7 @@ namespace EE579.Core.Slices.Tenants
             throw new NotImplementedException();
         }
 
-        public async Task Invite(InviteInput input, Guid tenantId)
+        public async Task<UserDto> Invite(InviteInput input, Guid tenantId)
         {
             var user = await _userManager.FindByEmailAsync(input.Email);
             if(user == null)
@@ -52,9 +58,12 @@ namespace EE579.Core.Slices.Tenants
                     Email = input.Email
                 };
                 var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded) throw new FormErrorException(new FieldError("email", "The was a problem inviting this user"));
+                if (!result.Succeeded)
+                    throw new FormErrorException(new FieldError("email", "The was a problem inviting this user"));
                 user = await _userManager.FindByEmailAsync(input.Email);
             }
+            else if (await _context.TenantUsers.AnyAsync(x => x.TenantId == tenantId && x.UserId == user.Id))
+                throw new FormErrorException(new FieldError("email", "A user with this email already has access to this tenant"));
             
             var tenantUser = new TenantUser { 
                 TenantId = tenantId,
@@ -66,6 +75,20 @@ namespace EE579.Core.Slices.Tenants
             var email = new TenantInviteEmail(await _currentUser.Get(), user, _appSettings.AdminUrl);
 
             await _emailService.SendEmail(user.Email, email);
+
+            return Mapper.Map<UserDto>(tenantUser);
+        }
+
+        public async Task RevokeAccess(Guid userId)
+        {
+            var tenantId = _httpContext.GetTenantId();
+
+            var tenantUser = await _context.TenantUsers.FindAsync(tenantId, userId);
+            if (tenantUser == null)
+                throw new HttpStatusCodeException(404);
+
+            _context.TenantUsers.Remove(tenantUser);
+            await _context.SaveChangesAsync();
         }
     }
 }

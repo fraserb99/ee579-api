@@ -70,11 +70,11 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{userId}")]
-        public async Task<UserDto> Update(Guid userId, [FromBody] UserInput input)
+        public async Task<IActionResult> Update(Guid userId, [FromBody] UserInput input)
         {
             var user = await _userService.Update(userId, input);
             var userDto = _mapper.Map<UserDto>(user);
-            return userDto;
+            return Ok(new ApiList<UserDto>(userDto));
         }
 
         /// <remarks>

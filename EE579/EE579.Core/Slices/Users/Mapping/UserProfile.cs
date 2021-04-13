@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Castle.Core.Internal;
 
 namespace EE579.Core.Slices.Users.Mapping
 {
@@ -17,7 +18,8 @@ namespace EE579.Core.Slices.Users.Mapping
             CreateMap<User, UserDto>();
             CreateMap<Tenant, TenantDto>();
             CreateMap<TenantUser, UserDto>()
-                .IncludeMembers(x => x.User);
+                .IncludeMembers(x => x.User)
+                .ForMember(x => x.Status, opts => opts.MapFrom(y => y.User.PasswordHash.IsNullOrEmpty() ? UserStatus.Invited : UserStatus.Active));
             CreateMap<UserInput, TenantUser>();
 
             CreateMap<User, Guid>()

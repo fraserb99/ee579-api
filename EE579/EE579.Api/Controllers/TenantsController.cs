@@ -8,6 +8,7 @@ using EE579.Core.Models;
 using EE579.Core.Slices.Tenants;
 using EE579.Core.Slices.Tenants.Models;
 using EE579.Core.Slices.Users;
+using EE579.Core.Slices.Users.Models;
 using EE579.Domain.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -86,21 +87,26 @@ namespace EE579.Api.Controllers
         [RequiresTenant]
         [HttpPost]
         [Route("invite")]
-        public async Task Invite([FromBody] InviteInput input)
+        public async Task<IActionResult> Invite([FromBody] InviteInput input)
         {
-           var tenantId = HttpContext.GetTenantId();
-           await _tenantService.Invite(input, tenantId.Value);
+            var tenantId = HttpContext.GetTenantId();
+            var userDto = await _tenantService.Invite(input, tenantId.Value);
+
+            return Ok(new ApiList<UserDto>(userDto));
         }
 
         /// <remarks>
-        /// Revoke a user's access to the tenant
+        /// Revoke a user's access to the current tenant
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [RequiresTenant]
         [HttpDelete]
-        [Route("{tenantId}/users/{userId}")]
-        public async Task RemoveUser(Guid tenantId, Guid userId)
+        [Route("users/{userId}")]
+        public async Task<IActionResult> RemoveUser(Guid userId)
         {
+            await _tenantService.RevokeAccess(userId);
 
+            return NoContent();
         }
     }
 }

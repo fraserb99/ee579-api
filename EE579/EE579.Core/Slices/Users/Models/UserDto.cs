@@ -15,6 +15,7 @@ namespace EE579.Core.Slices.Users.Models
         public string Email { get; set; }
         public string Name { get; set; }
         public Role Role { get; set; }
+        public UserStatus Status { get; set; }
 
         public List<TenantDto> Tenants { get; set; }
     }

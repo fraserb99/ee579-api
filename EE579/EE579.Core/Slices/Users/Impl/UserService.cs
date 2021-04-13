@@ -138,7 +138,7 @@ namespace EE579.Core.Slices.Users.Impl
 
         public async Task<UserDto> Update(Guid id, UserInput input)
         {
-            var tenantUser = await _context.TenantUsers.FindAsync(new[] {_httpContext.GetTenantId(), id});
+            var tenantUser = await _context.TenantUsers.FindAsync(_httpContext.GetTenantId(), id);
 
             tenantUser = _mapper.Map(input, tenantUser);
             await _context.SaveChangesAsync();
