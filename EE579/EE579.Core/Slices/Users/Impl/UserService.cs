@@ -120,8 +120,8 @@ namespace EE579.Core.Slices.Users.Impl
         {
             var currentUser = await _currentUser.Get();
 
-            var tenants = currentUser.Tenants;
-            var tenantDtos = _mapper.Map<List<TenantDto>>(tenants);
+            var tenantUsers = currentUser.TenantUsers;
+            var tenantDtos = _mapper.Map<List<TenantDto>>(tenantUsers);
 
             return tenantDtos;
         }

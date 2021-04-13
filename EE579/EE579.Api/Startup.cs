@@ -130,7 +130,7 @@ namespace EE579.Api
             services.AddTransient<IEmailService, EmailService>();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.Configure<SmtpSettings>(Configuration.GetSection("SmtpSettings"));
+            services.Configure<SmtpSettings>(Configuration.GetSection("AppSettings:SmtpSettings"));
         }
 
         private void ConfigureEfCore(IServiceCollection services)

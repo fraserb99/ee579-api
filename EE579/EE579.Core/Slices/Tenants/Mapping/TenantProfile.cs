@@ -12,6 +12,8 @@ namespace EE579.Core.Slices.Tenants.Mapping
         public TenantProfile()
         {
             CreateMap<Tenant, TenantDto>();
+            CreateMap<TenantUser, TenantDto>()
+                .IncludeMembers(x => x.Tenant);
         }
     }
 }
