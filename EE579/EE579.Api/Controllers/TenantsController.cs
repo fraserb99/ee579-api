@@ -97,10 +97,12 @@ namespace EE579.Api.Controllers
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete]
-        [Route("{tenantId}/users/{userId}")]
-        public async Task RemoveUser(Guid tenantId, Guid userId)
+        [Route("users/{userId}")]
+        public async Task<IActionResult> RemoveUser(Guid userId)
         {
+            await _tenantService.RevokeAccess(userId);
 
+            return NoContent();
         }
     }
 }
