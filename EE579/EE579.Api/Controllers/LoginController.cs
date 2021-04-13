@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 using EE579.Api.Examples;
+using EE579.Core.Infrastructure.Settings;
 using EE579.Core.Slices.Auth;
 using EE579.Core.Slices.Auth.Models;
 using EE579.Core.Slices.Devices.Models;
@@ -13,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace EE579.Api.Controllers
@@ -23,10 +26,14 @@ namespace EE579.Api.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly AppSettings _settings;
+        private readonly IConfiguration _config;
 
-        public LoginController(IAuthService authService)
+        public LoginController(IAuthService authService, IOptions<AppSettings> settings, IConfiguration config)
         {
             _authService = authService;
+            _settings = settings.Value;
+            _config = config;
         }
         /// <remarks>
         /// Allows a user to login to their account
@@ -49,6 +56,17 @@ namespace EE579.Api.Controllers
         public async Task<SessionDto> RefreshSession([FromBody] RefreshTokenInput input)
         {
             throw new NotImplementedException();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("/environment")]
+        public IActionResult GetEnvironmentVariables()
+        {
+            var appsettings = new AppSettings();
+            _config.GetSection("AppSettings").Bind(appsettings);
+
+            return Ok(appsettings);
         }
     }
 }

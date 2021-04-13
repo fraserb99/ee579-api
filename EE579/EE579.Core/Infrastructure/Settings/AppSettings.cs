@@ -8,6 +8,6 @@ namespace EE579.Core.Infrastructure.Settings
     {
         public string ApiUrl { get; set; }
         public string AdminUrl { get; set; }
-        public SmtpSettings Smtp { get; set; }
+        public SmtpSettings SmtpSettings { get; set; }
     }
 }

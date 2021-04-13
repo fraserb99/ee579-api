@@ -55,6 +55,8 @@ namespace EE579.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<SmtpSettings>(Configuration.GetSection("AppSettings:SmtpSettings"));
             ConfigureEfCore(services);
             services.AddControllers(opts => 
                     opts.Filters.Add(new HttpStatusCodeExceptionFilter()
@@ -129,8 +131,8 @@ namespace EE579.Api
             services.AddTransient<ICurrentTenant, CurrentTenant>();
             services.AddTransient<IEmailService, EmailService>();
 
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.Configure<SmtpSettings>(Configuration.GetSection("AppSettings:SmtpSettings"));
+            var appSettings = Configuration.GetSection("AppSettings");
+            services.AddSingleton(Configuration);
         }
 
         private void ConfigureEfCore(IServiceCollection services)
