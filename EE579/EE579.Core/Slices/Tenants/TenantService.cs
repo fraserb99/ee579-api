@@ -112,5 +112,22 @@ namespace EE579.Core.Slices.Tenants
 
             return Mapper.Map<TenantDto>(tenantUser);
         }
+
+        public async Task<TenantDto> Update(Guid tenantId, TenantInput input)
+        {
+            var tenantUser = await Repository.TenantUsers
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserId == _httpContext.GetUserId());
+            if (tenantUser == null)
+                throw new FormErrorException(new FieldError("name", "This tenant does not exist or you do not have access"));
+
+            var tenant = tenantUser.Tenant;
+            await ValidateInputAsync(input, tenant);
+
+            tenant = Mapper.Map(input, tenant);
+            await Repository.SaveChangesAsync(true);
+
+            return Mapper.Map<TenantDto>(tenantUser);
+        }
     }
 }
