@@ -50,9 +50,14 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("create")]
-        public TenantDto Create([FromBody] TenantInput input)
+        public async Task<IActionResult> Create([FromBody] TenantInput input)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var tenant = await _tenantService.Create(input);
+
+            return Ok(new ApiList<TenantDto>(tenant));
         }
 
 
