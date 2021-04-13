@@ -5,9 +5,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using EE579.Core.Infrastructure.Exceptions;
 using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Infrastructure.Services;
 using EE579.Core.Slices.Devices.Models;
+using EE579.Core.Slices.IotHub;
+using EE579.Core.Slices.IotHub.Models;
+using EE579.Core.Slices.IotHub.Models.MsgBodies;
 using EE579.Core.Slices.Tenants;
 using EE579.Domain;
 using EE579.Domain.Models;
@@ -30,13 +34,15 @@ namespace EE579.Core.Slices.Devices
 
         private readonly HttpContext _httpContext;
         private readonly ICurrentTenant _currentTenant;
+        private readonly IIotMessagingService _messagingService;
 
-        public DeviceService(DatabaseContext context, IMapper mapper, IHttpContextAccessor httpContext, ICurrentTenant currentTenant)
+        public DeviceService(DatabaseContext context, IMapper mapper, IHttpContextAccessor httpContext, ICurrentTenant currentTenant, IIotMessagingService msgSrv)
             : base(context, mapper)
         {
             _registry = RegistryManager.CreateFromConnectionString(IotHubConnectionString);
             _httpContext = httpContext.HttpContext;
             _currentTenant = currentTenant;
+            _messagingService = msgSrv;
         }
         public async Task<DeviceRegistrationDto> Register(string deviceId)
         {
@@ -89,6 +95,21 @@ namespace EE579.Core.Slices.Devices
                 entity.Tenant = _currentTenant.Get();
                 entity.DeviceState = DeviceState.Claimed;
             }
+        }
+
+        public async Task Identify(string deviceId)
+        {
+            var device = Repository.Devices.IgnoreQueryFilters().FirstOrDefault(x => x.Id == deviceId && x.Tenant == null);
+            if (device == null) throw new HttpStatusCodeException(404);
+
+            var ledBlinkPropertyBag = new OutputPropertyBag("LedBlink", "Led1");
+            var msgBody = new PeriodColourBody {
+                Period = 10,
+                Colour = LedColourEnum.Purple
+            };
+
+            await _messagingService.SendMessage(deviceId, ledBlinkPropertyBag.GetPropertyBag(), msgBody);
+           
         }
     }
 }
