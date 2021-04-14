@@ -24,5 +24,10 @@ namespace EE579.Core.Slices.Auth.External
         {
             return "2159bbf6-2fd9-4cad-aa56-dfab875f1cd5";
         }
+
+        protected override string GetNameClaim(ClaimsPrincipal claims)
+        {
+            return claims.FindFirstValue("name");
+        }
     }
 }

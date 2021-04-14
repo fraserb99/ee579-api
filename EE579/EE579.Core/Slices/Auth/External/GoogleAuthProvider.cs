@@ -26,5 +26,10 @@ namespace EE579.Core.Slices.Auth.External
         {
             return "394944070114-das844gmn89hk3t9npp62680n52tjtlu.apps.googleusercontent.com";
         }
+
+        protected override string GetNameClaim(ClaimsPrincipal claims)
+        {
+            return claims.FindFirstValue("name");
+        }
     }
 }
