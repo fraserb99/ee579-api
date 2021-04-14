@@ -9,5 +9,6 @@ namespace EE579.Core.Slices.DeviceGroups.Models
     {
         [Required]
         public string Name { get; set; }
+        public List<string> Devices { get; set; }
     }
 }

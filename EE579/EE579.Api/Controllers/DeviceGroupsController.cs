@@ -54,29 +54,7 @@ namespace EE579.Api.Controllers
             throw new NotImplementedException();
         }
 
-        /// <remarks>
-        /// Add a device to a group
-        /// </remarks>
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [RequiresTenant]
-        [HttpPost]
-        [Route("{groupId}/add-device/{deviceId}")]
-        public async Task<DeviceGroupDto> AddDevice(string groupId, string deviceId)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <remarks>
-        /// Remove a device from a group
-        /// </remarks>
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [RequiresTenant]
-        [HttpDelete]
-        [Route("{groupId}/devices/{deviceId}")]
-        public async Task RemoveDevice(Guid groupId, Guid deviceId)
-        {
-
-        }
+       
 
         /// <remarks>
         /// Deletes a device group
