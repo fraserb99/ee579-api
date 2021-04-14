@@ -16,7 +16,6 @@
   <ItemGroup>
     <Folder Include="Infrastructure\Extensions\" />
     <Folder Include="Slices\Examples\" />
-    <Folder Include="Slices\IotHub\Models\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -19,7 +19,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 namespace EE579.Api.Controllers
 {
-    [RequiresTenant]
+    
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
@@ -114,7 +114,17 @@ namespace EE579.Api.Controllers
             throw new NotImplementedException();
         }
 
-      
+        /// <remarks>
+        /// Blinks an LED on the microcontroller to identify it
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpPost]
+        [Route("{deviceId}/identify")]
+        public async Task Identify(string deviceId)
+        {
+            await _deviceService.Identify(deviceId);
+        }
+
         [HttpPost]
         [Route("dk")]
         public async Task<IActionResult> IotTest()
