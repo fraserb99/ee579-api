@@ -20,6 +20,7 @@ using EE579.Domain.Extensions;
 using EE579.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Devices;
+using Microsoft.Azure.Devices.Common.Security;
 using Microsoft.EntityFrameworkCore;
 using Device = EE579.Domain.Entities.Device;
 
@@ -32,8 +33,12 @@ namespace EE579.Core.Slices.Devices
         private const string IotHubConnectionString =
             "HostName=IFTTT-Iot-Hub.azure-devices.net;SharedAccessKeyName=registryReadWrite;SharedAccessKey=SpLPXBmM134nhCPQ1tFDsY30jPlPtc3Y6TRRFUOp8KM=";
 
-        private const string DeviceConnectionStringFormat =
-            "HostName=IFTTT-Iot-Hub.azure-devices.net;DeviceId={0};SharedAccessKey={1}";
+        private const string TargetFormat =
+            "IFTTT-Iot-Hub.azure-devices.net/devices/{0}";
+
+        private const string TopicFormat =
+            "devices/{0}/messages/devicebound/#";
+
 
         private readonly HttpContext _httpContext;
         private readonly ICurrentTenant _currentTenant;
@@ -72,9 +77,17 @@ namespace EE579.Core.Slices.Devices
             hubDevice = await _registry.GetDeviceAsync(deviceId) ??
                         await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
 
+            var sasBuilder = new SharedAccessSignatureBuilder
+            {
+                Key = hubDevice.Authentication.SymmetricKey.PrimaryKey,
+                Target = string.Format(TargetFormat, hubDevice.Id),
+                TimeToLive = TimeSpan.FromDays(999999)
+            };
+
             return new DeviceRegistrationDto
             {
-                MqttPassword = string.Format(DeviceConnectionStringFormat, deviceId, hubDevice.Authentication.SymmetricKey.PrimaryKey)
+                Password = sasBuilder.ToSignature(),
+                Topic = string.Format(TopicFormat, hubDevice.Id)
             };
         }
 
