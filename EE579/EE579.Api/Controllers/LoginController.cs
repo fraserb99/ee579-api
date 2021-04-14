@@ -49,6 +49,19 @@ namespace EE579.Api.Controllers
         }
 
         /// <remarks>
+        /// Allows a user to login to their account via a provider like Google or Microsoft
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
+        [HttpPost]
+        [Route("/login/external")]
+        [AllowAnonymous]
+        public async Task<SessionDto> ExternalLogin([FromBody] ExternalLoginInput input)
+        {
+            return await _authService.ExternalLogin(input.Token);
+        }
+
+        /// <remarks>
         /// Used to refresh a user's session
         /// </remarks>
         [HttpPost]

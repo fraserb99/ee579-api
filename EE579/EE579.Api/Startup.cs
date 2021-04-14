@@ -29,6 +29,7 @@ using Swashbuckle.AspNetCore.Filters;
 using EE579.Core.Slices.Users;
 using EE579.Core.Slices.Users.Impl;
 using EE579.Core.Slices.Auth;
+using EE579.Core.Slices.Auth.External;
 using EE579.Core.Slices.Auth.Impl;
 using EE579.Core.Slices.DeviceGroups;
 using EE579.Core.Slices.DeviceGroups.Impl;
@@ -133,6 +134,13 @@ namespace EE579.Api
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<ICurrentTenant, CurrentTenant>();
             services.AddTransient<IEmailService, EmailService>();
+
+            services.AddTransient<IExternalProviderFactory, ExternalProviderFactory>();
+
+            services.AddScoped<GoogleAuthProvider>()
+                .AddScoped<IExternalProvider, GoogleAuthProvider>(s => s.GetService<GoogleAuthProvider>());
+            services.AddScoped<MicrosoftAuthProvider>()
+                .AddScoped<IExternalProvider, MicrosoftAuthProvider>(s => s.GetService<MicrosoftAuthProvider>());
 
             var appSettings = Configuration.GetSection("AppSettings");
             services.AddSingleton(Configuration);
