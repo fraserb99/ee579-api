@@ -39,10 +39,13 @@ namespace EE579.Api.Controllers
         /// Gets a list of devices belonging to the current tenant
         /// </remarks>
         [RequiresTenant]
+        [ProducesResponseType(typeof(ApiList<DeviceDto>), StatusCodes.Status200OK)]
         [HttpGet]
-        public async Task<ApiList<DeviceDto>> Get()
+        public async Task<IActionResult> Get()
         {
-            throw new NotImplementedException();
+            var devices = await _deviceService.GetAll();
+
+            return Ok(new ApiList<DeviceDto>(_mapper.Map<List<DeviceDto>>(devices)));
         }
 
         /// <remarks>
@@ -91,6 +94,21 @@ namespace EE579.Api.Controllers
         }
 
         /// <remarks>
+        /// This is also used claim a device, setting it's tenantId is set to the tenant in the header and allowing the user to choose a name
+        /// </remarks>
+        [ProducesResponseType(typeof(ApiList<DeviceDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
+        [HttpPut]
+        [RequiresTenant]
+        [Route("{deviceId}/claim")]
+        public async Task<IActionResult> Claim([FromBody] DeviceInput input, string deviceId)
+        {
+            var device = await _deviceService.Claim(deviceId, input);
+
+            return Ok(new ApiList<DeviceDto>(_mapper.Map<DeviceDto>(device)));
+        }
+
+        /// <remarks>
         /// Used to move a device to a new tenant. This will also remove the device from any rules on the previous tenant
         /// </remarks>
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -109,9 +127,11 @@ namespace EE579.Api.Controllers
         [RequiresTenant]
         [HttpDelete]
         [Route("{deviceId}/unclaim")]
-        public async Task Delete()
+        public async Task<IActionResult> Delete(string deviceId)
         {
-            throw new NotImplementedException();
+            await _deviceService.Unclaim(deviceId);
+
+            return NoContent();
         }
 
         /// <remarks>

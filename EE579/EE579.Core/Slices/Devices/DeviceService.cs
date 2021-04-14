@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using EE579.Core.Infrastructure.Exceptions;
+using EE579.Core.Infrastructure.Exceptions.Models;
 using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Infrastructure.Services;
 using EE579.Core.Slices.Devices.Models;
@@ -14,6 +15,7 @@ using EE579.Core.Slices.IotHub.Models;
 using EE579.Core.Slices.IotHub.Models.MsgBodies;
 using EE579.Core.Slices.Tenants;
 using EE579.Domain;
+using EE579.Domain.Extensions;
 using EE579.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Devices;
@@ -81,20 +83,13 @@ namespace EE579.Core.Slices.Devices
         {
             var currentIp = _httpContext.GetIpAddress().ToString();
 
-            var devices = Repository.Devices.Where(x =>
-                x.DeviceState == DeviceState.Unclaimed &&
+            var devices = Repository.Devices
+                .IgnoreQueryFilters()
+                .Where(x =>
+                x.TenantId == null &&
                 x.IpAddress == currentIp);
 
             return await devices.ToListAsync();
-        }
-
-        protected override async Task ValidateInputAsync(DeviceInput input, Device entity = null)
-        {
-            if (entity != null && entity.DeviceState == DeviceState.Unclaimed)
-            {
-                entity.Tenant = _currentTenant.Get();
-                entity.DeviceState = DeviceState.Claimed;
-            }
         }
 
         public async Task Identify(string deviceId)
@@ -110,6 +105,35 @@ namespace EE579.Core.Slices.Devices
 
             await _messagingService.SendMessage(deviceId, ledBlinkPropertyBag.GetPropertyBag(), msgBody);
            
+        }
+
+        public async Task<Device> Claim(string deviceId, DeviceInput input)
+        {
+            var ip = _httpContext.GetIpAddress().ToString();
+            var device = await Repository.Devices
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.Id == deviceId);
+
+            if (ip != device.IpAddress)
+                throw new FormErrorException(new FieldError("name", "You must be on the same network as the device in order to claim it"));
+
+            device = Mapper.Map(input, device);
+            device.TenantId = _httpContext.GetTenantId();
+            await Repository.SaveChangesAsync();
+
+            return device;
+        }
+
+        public async Task Unclaim(string deviceId)
+        {
+            var device = await Repository.Devices.FindAsync(deviceId);
+            if (device == null)
+                throw new HttpStatusCodeException(404);
+
+            device.TenantId = null;
+            device.Tenant = null;
+            device.Name = null;
+            await Repository.SaveChangesAsync(true);
         }
     }
 }
