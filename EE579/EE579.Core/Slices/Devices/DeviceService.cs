@@ -15,6 +15,7 @@ using EE579.Core.Slices.IotHub.Models;
 using EE579.Core.Slices.IotHub.Models.MsgBodies;
 using EE579.Core.Slices.Tenants;
 using EE579.Domain;
+using EE579.Domain.Entities;
 using EE579.Domain.Extensions;
 using EE579.Domain.Models;
 using Microsoft.AspNetCore.Http;
@@ -133,6 +134,9 @@ namespace EE579.Core.Slices.Devices
             device.TenantId = null;
             device.Tenant = null;
             device.Name = null;
+            device.DeviceGroups.Clear();
+            device.Inputs.Clear();
+            device.Outputs.Clear();
             await Repository.SaveChangesAsync(true);
         }
     }
