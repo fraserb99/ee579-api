@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EE579.Core.Slices.DeviceGroups.Models;
 
 namespace EE579.Core.Slices.DeviceGroups.Mapping
 {
@@ -13,7 +14,12 @@ namespace EE579.Core.Slices.DeviceGroups.Mapping
     {
         public DeviceGroupProfile()
         {
-            CreateMap<string, Device>().ConvertUsing<MACStringToDeviceConverter>();
+            CreateMap<DeviceGroupInput, DeviceGroup>();
+            CreateMap<Entity<string>, Device>()
+                .ConvertUsing<AutocompleteToEntityConverter<string, Device>>();
+
+            CreateMap<DeviceGroup, DeviceGroupDto>()
+                .ForMember(x => x.TotalDevices, opts => opts.MapFrom(y => y.Devices.Count));
         }
     }
 }

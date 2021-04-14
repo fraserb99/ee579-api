@@ -9,10 +9,10 @@ namespace EE579.Core.Slices.DeviceGroups.Models
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public int TotalDevices { get; set; }
         /// <summary>
-        /// A list of the device id's that belong to the group
+        /// A list of the devices that belong to the group
         /// </summary>
-        /// <example>[00:0a:95:9d:68:16]</example>
-        public List<string> Devices { get; set; }
+        public List<DeviceDto> Devices { get; set; }
     }
 }

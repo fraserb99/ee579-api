@@ -9,16 +9,17 @@ using System.Threading.Tasks;
 
 namespace EE579.Core.Slices.Devices.Mapping
 {
-    public class MACStringToDeviceConverter : ITypeConverter<string, Device>
+    public class AutocompleteToEntityConverter<TId, TEntity> : ITypeConverter<Entity<TId>, TEntity> where TEntity : Entity<TId>
     {
         private readonly DatabaseContext _context;
-        public MACStringToDeviceConverter(DatabaseContext context)
+        public AutocompleteToEntityConverter(DatabaseContext context)
         {
             _context = context;
         }
-        public Device Convert(string source, Device destination, ResolutionContext context)
+
+        public TEntity Convert(Entity<TId> source, TEntity destination, ResolutionContext context)
         {
-            return _context.Devices.FirstOrDefault(x => x.Id == source);
+            return _context.Set<TEntity>().Find(source.Id);
         }
     }
 }

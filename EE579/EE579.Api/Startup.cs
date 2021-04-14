@@ -30,6 +30,8 @@ using EE579.Core.Slices.Users;
 using EE579.Core.Slices.Users.Impl;
 using EE579.Core.Slices.Auth;
 using EE579.Core.Slices.Auth.Impl;
+using EE579.Core.Slices.DeviceGroups;
+using EE579.Core.Slices.DeviceGroups.Impl;
 using EE579.Core.Slices.Devices;
 using EE579.Core.Slices.Email;
 using EE579.Core.Slices.Tenants;
@@ -127,6 +129,7 @@ namespace EE579.Api
             services.AddTransient<ICurrentUser, CurrentUser>();
             services.AddTransient<IIotMessagingService, IotMessagingService>();
             services.AddTransient<IDeviceService, DeviceService>();
+            services.AddTransient<IDeviceGroupService, DeviceGroupService>();
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<ICurrentTenant, CurrentTenant>();
             services.AddTransient<IEmailService, EmailService>();
