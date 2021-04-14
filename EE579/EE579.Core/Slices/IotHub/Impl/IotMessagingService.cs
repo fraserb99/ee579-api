@@ -8,17 +8,12 @@ using Newtonsoft.Json;
 
 namespace EE579.Core.Slices.IotHub.Impl
 {
-    public class IotMessagingService : IIotMessagingService
+    public class IotMessagingService
     {
-        private static ServiceClient serviceClient;
-        private static string connectionString = "HostName=IFTTT-Iot-Hub.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=jPmQczB+G9YtEyVGMprjBVCCu7Z843QHFgR65QkfxMk=";
+        private const string ConnectionString = "HostName=IFTTT-Iot-Hub.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=jPmQczB+G9YtEyVGMprjBVCCu7Z843QHFgR65QkfxMk=";
+        private static ServiceClient _serviceClient = ServiceClient.CreateFromConnectionString(ConnectionString);
 
-        public IotMessagingService()
-        {
-            serviceClient = ServiceClient.CreateFromConnectionString(connectionString);
-        }
-
-        public async Task SendMessage(string deviceId, Dictionary<string, string> propertyBag, object body)
+        public static async Task SendMessage(string deviceId, Dictionary<string, string> propertyBag, object body)
         {
             string body_ = JsonConvert.SerializeObject(body);
             var msg = new Message(Encoding.ASCII.GetBytes(body_));
@@ -26,7 +21,7 @@ namespace EE579.Core.Slices.IotHub.Impl
             foreach (var property in propertyBag)
                 msg.Properties.Add(property.Key, property.Value);
 
-            await serviceClient.SendAsync(deviceId, msg);
+            await _serviceClient.SendAsync(deviceId, msg);
         }
 
         //public Task SendOutputMessage(string mac, IOutputPropertyBag propertyBag, object body)
