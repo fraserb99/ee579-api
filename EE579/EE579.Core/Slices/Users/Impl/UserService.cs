@@ -120,7 +120,10 @@ namespace EE579.Core.Slices.Users.Impl
         {
             var currentUser = await _currentUser.Get();
 
-            var tenantUsers = currentUser.TenantUsers;
+            var tenantUsers = await _context.TenantUsers
+                .IgnoreQueryFilters()
+                .Where(x => x.UserId == currentUser.Id)
+                .ToListAsync();
             var tenantDtos = _mapper.Map<List<TenantDto>>(tenantUsers);
 
             return tenantDtos;

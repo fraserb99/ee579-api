@@ -50,22 +50,32 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPost]
         [Route("create")]
-        public TenantDto Create([FromBody] TenantInput input)
+        public async Task<IActionResult> Create([FromBody] TenantInput input)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var tenant = await _tenantService.Create(input);
+
+            return Ok(new ApiList<TenantDto>(tenant));
         }
 
 
         /// <remarks>
         /// Updates a Tenant
         /// </remarks>
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiList<TenantDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [HttpPut]
         [Route("{tenantId}")]
-        public async Task<TenantDto> Update([FromBody] TenantInput input, Guid tenantId)
+        public async Task<IActionResult> Update([FromBody] TenantInput input, Guid tenantId)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var tenant = await _tenantService.Update(tenantId, input);
+
+            return Ok(new ApiList<TenantDto>(tenant));
         }
 
         /// <remarks>

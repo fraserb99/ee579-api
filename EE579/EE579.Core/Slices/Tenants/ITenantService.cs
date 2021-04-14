@@ -14,5 +14,7 @@ namespace EE579.Core.Slices.Tenants
         public IEnumerable<TenantDto> Get();
         public Task<UserDto> Invite(InviteInput input, Guid tenantId);
         public Task RevokeAccess(Guid userId);
+        public Task<TenantDto> Create(TenantInput input);
+        public Task<TenantDto> Update(Guid tenantId, TenantInput input);
     }
 }

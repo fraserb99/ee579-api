@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using EE579.Core.Infrastructure.Exceptions;
 using EE579.Core.Infrastructure.Exceptions.Models;
+using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Infrastructure.Services;
 using EE579.Core.Infrastructure.Settings;
 using EE579.Core.Slices.Email;
@@ -15,6 +16,7 @@ using EE579.Core.Slices.Users.Models;
 using EE579.Domain;
 using EE579.Domain.Entities;
 using EE579.Domain.Extensions;
+using EE579.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -89,6 +91,43 @@ namespace EE579.Core.Slices.Tenants
 
             _context.TenantUsers.Remove(tenantUser);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<TenantDto> Create(TenantInput input)
+        {
+            var userId = _httpContext.GetUserId();
+            await ValidateCreateInputAsync(input);
+            var tenant = Mapper.Map<Tenant>(input);
+
+            await Repository.AddAsync(tenant);
+            await Repository.SaveChangesAsync();
+            var tenantUser = new TenantUser
+            {
+                TenantId = tenant.Id,
+                UserId = userId,
+                Role = Role.Owner
+            };
+            await Repository.AddAsync(tenantUser);
+            await Repository.SaveChangesAsync(true);
+
+            return Mapper.Map<TenantDto>(tenantUser);
+        }
+
+        public async Task<TenantDto> Update(Guid tenantId, TenantInput input)
+        {
+            var tenantUser = await Repository.TenantUsers
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.TenantId == tenantId && x.UserId == _httpContext.GetUserId());
+            if (tenantUser == null)
+                throw new FormErrorException(new FieldError("name", "This tenant does not exist or you do not have access"));
+
+            var tenant = tenantUser.Tenant;
+            await ValidateInputAsync(input, tenant);
+
+            tenant = Mapper.Map(input, tenant);
+            await Repository.SaveChangesAsync(true);
+
+            return Mapper.Map<TenantDto>(tenantUser);
         }
     }
 }
