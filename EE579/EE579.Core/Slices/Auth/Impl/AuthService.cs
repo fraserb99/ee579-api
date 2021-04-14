@@ -8,12 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using EE579.Core.Infrastructure.Exceptions;
 using EE579.Core.Infrastructure.Exceptions.Models;
+using EE579.Core.Slices.Auth.External;
+using EE579.Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace EE579.Core.Slices.Auth.Impl
 {
@@ -23,12 +28,14 @@ namespace EE579.Core.Slices.Auth.Impl
         private readonly DatabaseContext _context;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly IExternalProviderFactory _extrExternalProviderFactory;
 
-        public AuthService(DatabaseContext context, IMapper mapper, UserManager<User> userManager)
+        public AuthService(DatabaseContext context, IMapper mapper, UserManager<User> userManager, IExternalProviderFactory externalProviderFactory)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _extrExternalProviderFactory = externalProviderFactory;
         }
 
         public async Task<string> CreateToken(User user)
@@ -66,6 +73,9 @@ namespace EE579.Core.Slices.Auth.Impl
                     new FieldError("password", "Invalid email or password"),
                 });
 
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+                throw new FormErrorException(new FieldError("email", "You must verify your email before signing in"));
+
             user.RefreshToken = Guid.NewGuid();
             await _context.SaveChangesAsync();
 
@@ -78,6 +88,22 @@ namespace EE579.Core.Slices.Auth.Impl
             };
 
             return session;
+        }
+
+
+
+        public async Task<SessionDto> ExternalLogin(string token)
+        {
+            var externalProvider = _extrExternalProviderFactory.GetProvider(token);
+
+            var user = await externalProvider.AutoProvisionUserFromToken(token);
+
+            return new SessionDto
+            {
+                User = _mapper.Map<UserDto>(user),
+                Token = await CreateToken(user),
+                RefreshToken = user.RefreshToken
+            };
         }
 
         public async Task<SessionDto> RefreshToken(RefreshTokenInput input)
