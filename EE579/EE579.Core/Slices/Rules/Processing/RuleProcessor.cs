@@ -45,7 +45,6 @@ namespace EE579.Core.Slices.Rules.Processing
         }
 
         protected abstract Task<IEnumerable<Rule>> GetTriggeredCore(IQueryable<TRuleInput> rules);
-        protected abstract Task ProcessOutput(RuleOutput output);
 
         protected virtual async Task AddRuleTriggeredEvent(Rule rule)
         {
@@ -62,7 +61,7 @@ namespace EE579.Core.Slices.Rules.Processing
                 foreach (var ruleOutput in rule.Outputs)
                 {
                     await throttler.WaitAsync();
-                    allTasks.Add(ProcessOutput(ruleOutput));
+                    allTasks.Add(ruleOutput.SendOutputMessage());
                 }
                 await throttler.WaitAsync();
                 allTasks.Add(AddRuleTriggeredEvent(rule));

@@ -29,7 +29,7 @@ namespace EE579.Core.Slices.IotHub.Impl
             return SendMessage(deviceId, message.GetProperties(), message.GetBody());
         }
 
-        //public Task SendOutputMessage(string mac, IOutputPropertyBag propertyBag, object body)
+        //public Task BuildMessageBody(string mac, IOutputPropertyBag propertyBag, object body)
         //{
         //    string body_ = JsonConvert.SerializeObject(body);
         //    var msg = new Message(Encoding.ASCII.GetBytes(body_));
