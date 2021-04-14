@@ -10,10 +10,8 @@ using EE579.Core.Infrastructure.Exceptions.Models;
 using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Infrastructure.Services;
 using EE579.Core.Slices.Devices.Models;
-using EE579.Core.Slices.IotHub;
 using EE579.Core.Slices.IotHub.Impl;
-using EE579.Core.Slices.IotHub.Models;
-using EE579.Core.Slices.IotHub.Models.MsgBodies;
+using EE579.Core.Slices.IotHub.Messages;
 using EE579.Core.Slices.Tenants;
 using EE579.Domain;
 using EE579.Domain.Entities;
@@ -111,13 +109,16 @@ namespace EE579.Core.Slices.Devices
             if (device == null) 
                 throw new HttpStatusCodeException(404);
 
-            var ledBlinkPropertyBag = new OutputPropertyBag("LedBlink", "Led1");
-            var msgBody = new PeriodColourBody {
-                Period = 10,
-                Colour = LedColourEnum.Purple
+            var message = new OutputMessage(OutputType.LedBlink, LedPeripheral.Led1)
+            {
+                Body = new
+                {
+                    Period = 10,
+                    Colour = LedColour.White
+                }
             };
 
-            await IotMessagingService.SendMessage(deviceId, ledBlinkPropertyBag.GetPropertyBag(), msgBody);
+            await IotMessagingService.SendMessage(deviceId, message);
            
         }
 
