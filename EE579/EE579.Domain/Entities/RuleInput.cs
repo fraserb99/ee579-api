@@ -12,7 +12,9 @@ namespace EE579.Domain.Entities
         {
             Type = type;
         }
+        public Guid RuleId { get; set; }
 
+        public virtual Rule Rule { get; set; }
         [Required]
         public virtual Device Device { get; set; }
         [Required]
