@@ -62,17 +62,15 @@ namespace EE579.Core.Slices.Devices
                 };
                 Repository.Devices.Add(device);
                 await Repository.SaveChangesAsync();
-
-                hubDevice = await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
             }
             else
             {
                 device.IpAddress = _httpContext.GetIpAddress().ToString();
                 await Repository.SaveChangesAsync();
-
-                hubDevice = await _registry.GetDeviceAsync(deviceId) ??
-                            await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
             }
+
+            hubDevice = await _registry.GetDeviceAsync(deviceId) ??
+                        await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
 
             return new DeviceRegistrationDto
             {
@@ -95,8 +93,11 @@ namespace EE579.Core.Slices.Devices
 
         public async Task Identify(string deviceId)
         {
-            var device = Repository.Devices.IgnoreQueryFilters().FirstOrDefault(x => x.Id == deviceId && x.Tenant == null);
-            if (device == null) throw new HttpStatusCodeException(404);
+            var device = Repository.Devices
+                .IgnoreQueryFilters()
+                .FirstOrDefault(x => x.Id == deviceId);
+            if (device == null) 
+                throw new HttpStatusCodeException(404);
 
             var ledBlinkPropertyBag = new OutputPropertyBag("LedBlink", "Led1");
             var msgBody = new PeriodColourBody {
