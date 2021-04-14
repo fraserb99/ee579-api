@@ -10,6 +10,9 @@ namespace EE579.Domain.Extensions
     {
         public static Guid? GetTenantId(this HttpContext context)
         {
+            if (context == null)
+                return null;
+
             if (!context.Request.Headers.TryGetValue("tenant-id", out var tenantId))
                 return null;
             var idString = tenantId.ToString();

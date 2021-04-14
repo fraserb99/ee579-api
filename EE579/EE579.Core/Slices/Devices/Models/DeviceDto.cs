@@ -14,5 +14,6 @@ namespace EE579.Core.Slices.Devices.Models
         /// </summary>
         /// <example>Claimed</example>
         public DeviceState DeviceState { get; set; }
+        public ConnectionState ConnectionState { get; set; }
     }
 }

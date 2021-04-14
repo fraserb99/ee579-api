@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Consumer;
 using Azure.Messaging.EventHubs.Processor;
 using Azure.Storage.Blobs;
+using EE579.Core.Slices.IotHub.Models;
+using EE579.Domain;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace EE579.Core.Slices.IotHub
@@ -20,13 +28,19 @@ namespace EE579.Core.Slices.IotHub
 
         private const string eventHubConnString =
             "Endpoint=sb://ihsuprodlnres008dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=J1Sut+o+80t3UsKGH9alr2aghIyy+tJykfoXPSrg9kc=;EntityPath=iothub-ehub-ifttt-iot-7659698-d1cdec4b32";
-
         private const string eventHubName = "iothub-ehub-ifttt-iot-7659698-d1cdec4b32";
 
-        private readonly EventProcessorClient _eventProcessor;
+        private const string deviceStateConnString =
+            "Endpoint=sb://ee579-event-hub.servicebus.windows.net/;SharedAccessKeyName=service;SharedAccessKey=OFeR4dTrtqz4aJVYeb3SpzZhrwJ6EhtKuU/Pgyj6H1w=;EntityPath=connection-hub";
+        private const string deviceStateHubName = "ee579-event-hub";
 
-        public IotHubWorkerService()
+        private readonly IConfiguration _configuration;
+        private readonly EventProcessorClient _eventProcessor;
+        private readonly EventProcessorClient _deviceStateProcessor;
+
+        public IotHubWorkerService(IConfiguration configuration)
         {
+            _configuration = configuration;
             var storageClient = new BlobContainerClient(storageConnectionString, containerName);
 
             _eventProcessor = new EventProcessorClient(
@@ -34,6 +48,11 @@ namespace EE579.Core.Slices.IotHub
                 EventHubConsumerClient.DefaultConsumerGroupName,
                 eventHubConnString,
                 eventHubName);
+
+            _deviceStateProcessor = new EventProcessorClient(
+                storageClient,
+                EventHubConsumerClient.DefaultConsumerGroupName,
+                deviceStateConnString);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -43,9 +62,13 @@ namespace EE579.Core.Slices.IotHub
                 _eventProcessor.ProcessEventAsync += ProcessEventHandler;
                 _eventProcessor.ProcessErrorAsync += ProcessErrorHandler;
 
+                _deviceStateProcessor.ProcessEventAsync += ProcessConnectionStateChange;
+                _deviceStateProcessor.ProcessErrorAsync += ProcessErrorHandler;
+
                 try
                 {
                     await _eventProcessor.StartProcessingAsync(stoppingToken);
+                    await _deviceStateProcessor.StartProcessingAsync(stoppingToken);
                     await Task.Delay(Timeout.Infinite, stoppingToken);
                 }
                 catch (TaskCanceledException _) { }
@@ -80,6 +103,44 @@ namespace EE579.Core.Slices.IotHub
         private async Task ProcessErrorHandler(ProcessErrorEventArgs args)
         {
             Console.WriteLine(args.Exception.Message);
+        }
+
+        private async Task ProcessConnectionStateChange(ProcessEventArgs args)
+        {
+            Console.WriteLine(args.Data.EnqueuedTime.DateTime + ": " + args.Data.EventBody);
+            var message = args.Data.EventBody.ToObjectFromJson<List<ConnectionStateEvent>>().First();
+
+            var contextBuilder = new DbContextOptionsBuilder<DatabaseContext>();
+            contextBuilder
+                .UseLazyLoadingProxies()
+                .UseSqlServer(_configuration.GetConnectionString("Default"));
+            await using var context = new DatabaseContext(contextBuilder.Options, new HttpContextAccessor());
+            var device = await context.Devices.FindAsync(message.data.deviceId);
+
+            if (device == null)
+            {
+                await args.UpdateCheckpointAsync();
+                return;
+            }
+
+            if (message.eventType == "Microsoft.Devices.DeviceConnected")
+            {
+                if (device.LastConnectionTime < message.eventTime)
+                {
+                    device.LastConnectionTime = message.eventTime;
+                    await context.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                if (device.LastDisconnectionTime < message.eventTime)
+                {
+                    device.LastDisconnectionTime = message.eventTime;
+                    await context.SaveChangesAsync();
+                }
+            }
+
+            await args.UpdateCheckpointAsync();
         }
     }
 }

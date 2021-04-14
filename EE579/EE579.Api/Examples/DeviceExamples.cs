@@ -50,7 +50,7 @@ namespace EE579.Api.Examples
         {
             return new DeviceRegistrationDto
             {
-                MqttPassword = "SharedAccessSignature sr=EE579T-Iot-Hub.azure-devices.net%2Fdevices%2F00%3A0a%3A95%3A9d%3A68%3A16&sig=P5ZwP6DSCBjclOl2IFEb6AkAcczdT7w1Nn8MoGBtZn0%3D&se=36324632293"
+                
             };
         }
     }
