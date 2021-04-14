@@ -11,7 +11,7 @@ namespace EE579.Core.Slices.Rules.Processing
 {
     public class RuleProcessorFactory
     {
-        public static RuleProcessor CreateRuleProcessor(ProcessEventArgs args, IConfiguration config)
+        public static IRuleProcessor CreateRuleProcessor(ProcessEventArgs args, IConfiguration config)
         {
             var type = args.GetInputType();
 
