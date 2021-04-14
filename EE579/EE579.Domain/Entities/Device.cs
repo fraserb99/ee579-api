@@ -10,8 +10,6 @@ namespace EE579.Domain.Entities
     {
         public string Name { get; set; }
         public string IpAddress { get; set; }
-        [Required]
-        public DeviceState DeviceState { get; set; }
         public virtual ICollection<RuleInput> Inputs { get; set; }
         public virtual ICollection<RuleOutput> Outputs { get; set; }
         public virtual ICollection<DeviceGroup> DeviceGroups { get; set; }
