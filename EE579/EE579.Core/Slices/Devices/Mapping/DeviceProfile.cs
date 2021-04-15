@@ -13,17 +13,18 @@ namespace EE579.Core.Slices.Devices.Mapping
         public DeviceProfile()
         {
             CreateMap<Device, DeviceDto>()
-                .ForMember(x => x.DeviceState, 
+                .ForMember(x => x.DeviceState,
                     opts => opts.MapFrom(y => y.TenantId != null ? DeviceState.Claimed : DeviceState.Unclaimed))
                 .ForMember(x => x.ConnectionState, opts => opts.MapFrom(y =>
                     y.LastConnectionTime > y.LastDisconnectionTime ?
                         ConnectionState.Connected
                         :
-                        y.LastConnectionTime < y.LastDisconnectionTime ? 
+                        y.LastConnectionTime < y.LastDisconnectionTime ?
                             ConnectionState.Disconnected
                             :
-                            ConnectionState.New));
-
+                            ConnectionState.New))
+                .AfterMap<WebHookUrlAfterMap>();
+                
             CreateMap<DeviceInput, Device>();
         }
     }
