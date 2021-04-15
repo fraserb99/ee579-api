@@ -21,10 +21,13 @@ namespace EE579.Core.Slices.Rules.Processing
                     return new ButtonPushedProcessor(args, config);
                 case InputType.Switch:
                     return new SwitchFlippedProcessor(args, config);
+                case InputType.Potentiometer:
+                    return new PotentiometerProcessor(args, config);
+                case InputType.Temperature:
+                    return new TemperatureProcessor(args, config);
                 default:
                     return null;
             }
-            
         }
     }
 }

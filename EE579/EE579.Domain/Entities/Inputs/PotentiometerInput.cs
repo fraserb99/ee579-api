@@ -11,5 +11,6 @@ namespace EE579.Domain.Entities.Inputs
             : base(InputType.Potentiometer) { }
         public int GreaterThan { get; set; }
         public int LessThan { get; set; }
+        public int LastValue { get; set; }
     }
 }
