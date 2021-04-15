@@ -12,6 +12,6 @@ namespace EE579.Core.Slices.Rules.Models
     {
         public DeviceGroupDto DeviceGroup { get; set; }
         public DeviceDto Device { get; set; }
-        public OutputType OutputType { get; set; }
+        public OutputType Type { get; set; }
     }
 }

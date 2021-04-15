@@ -12,14 +12,14 @@ namespace EE579.Domain.Entities
 {
     public abstract class RuleOutput : EntityWithTenant<Guid>
     {
-        protected RuleOutput(OutputType outputType)
+        protected RuleOutput(OutputType type)
         {
-            OutputType = outputType;
+            Type = type;
         }
         [Required]
         public virtual Device Device { get; set; }
         [Required]
-        public OutputType OutputType { get; set; }
+        public OutputType Type { get; set; }
 
         public Task SendOutputMessage()
         {
@@ -38,7 +38,7 @@ namespace EE579.Domain.Entities
 
         protected virtual CloudToDeviceMessage CreateMessageCore()
         {
-            return new OutputMessage(OutputType);
+            return new OutputMessage(Type);
         }
 
         protected virtual object BuildMessageBody()

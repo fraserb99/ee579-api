@@ -13,22 +13,20 @@ namespace EE579.Domain.Entities.Output
             : base(OutputType.LedOutput) { }
 
         public bool Value { get; set; }
-        public LedColour Colour { get; set; }
+        public LedColour? Colour { get; set; }
         public LedPeripheral Peripheral { get; set; }
 
         protected override CloudToDeviceMessage CreateMessageCore()
         {
-            return new OutputMessage(OutputType, Peripheral);
+            return new OutputMessage(Type, Peripheral);
         }
 
         protected override object BuildMessageBody()
         {
-            return new
-            {
-                Value,
-                Colour,
-                Peripheral
-            };
+            if (Peripheral == LedPeripheral.Led3)
+                return new { Value, Colour };
+
+            return new { Value };
         }
     }
 }

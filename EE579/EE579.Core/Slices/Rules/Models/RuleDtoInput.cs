@@ -11,6 +11,8 @@ namespace EE579.Core.Slices.Rules.Models
 {
     public class RuleDtoInput
     {
+        [Required]
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         /// <summary>
@@ -23,6 +25,6 @@ namespace EE579.Core.Slices.Rules.Models
         /// A list of RuleOutputDtos
         /// </summary>
         [Required]
-        public List<object> Outputs { get; set; }
+        public List<RuleOutputDto> Outputs { get; set; }
     }
 }
