@@ -36,6 +36,8 @@ namespace EE579.Core.Slices.Rules.Mapping
             CreateMap<RuleOutputDto, RuleOutput>()
                 .ConvertUsing<RuleOutputConverter>();
             CreateMap<RuleOutputDto, BuzzerOnOutput>();
+            CreateMap<Event, EventDto>()
+                .ForMember(x => x.Name, opts => opts.MapFrom(y => y.Rule.Name));
         }
     }
 }
