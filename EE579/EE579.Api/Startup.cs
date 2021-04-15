@@ -39,10 +39,13 @@ using EE579.Core.Slices.Tenants;
 using Microsoft.IdentityModel.Tokens;
 using EE579.Core.Slices.IotHub;
 using EE579.Core.Slices.IotHub.Impl;
+using EE579.Core.Slices.Rules;
 using EE579.Domain.Entities;
 using EE579.Domain.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace EE579.Api
 {
@@ -61,13 +64,13 @@ namespace EE579.Api
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<SmtpSettings>(Configuration.GetSection("AppSettings:SmtpSettings"));
             ConfigureEfCore(services);
-            services.AddControllers(opts => 
+            services.AddControllers(opts =>
                     opts.Filters.Add(new HttpStatusCodeExceptionFilter()
                 ))
-                .AddJsonOptions(opts =>
+                .AddNewtonsoftJson(opts =>
                 {
-                    opts.JsonSerializerOptions
-                        .Converters.Add(new JsonStringEnumConverter());
+                    opts.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+                    opts.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
             services.AddSwaggerGen(c =>
             {
@@ -133,6 +136,7 @@ namespace EE579.Api
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<ICurrentTenant, CurrentTenant>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IRuleService, RuleService>();
 
             services.AddTransient<IExternalProviderFactory, ExternalProviderFactory>();
 
