@@ -48,7 +48,12 @@ namespace EE579.Core.Slices.Rules.Processing
 
         protected virtual async Task AddRuleTriggeredEvent(Rule rule)
         {
-
+            var _event = new Event {
+                RuleId = rule.Id,
+                TenantId = rule.TenantId,
+                Timestamp = DateTime.Now
+            };
+            await _context.Events.AddAsync(_event);
         }
 
         private async Task ProcessRules(IEnumerable<Rule> rules)

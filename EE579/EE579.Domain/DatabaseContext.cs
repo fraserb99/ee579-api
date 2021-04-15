@@ -38,6 +38,7 @@ namespace EE579.Domain
         public virtual DbSet<TenantUser> TenantUsers { get; set; }
         public virtual DbSet<Device> Devices { get; set; }
         public virtual DbSet<Rule> Rules { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<RuleInput> RuleInputs { get; set; }
         public virtual DbSet<RuleOutput> RuleOutputs { get; set; }
         public virtual DbSet<DeviceGroup> DeviceGroups { get; set; }
@@ -104,6 +105,10 @@ namespace EE579.Domain
             modelBuilder.Entity<RuleOutput>()
                 .HasQueryFilter(x =>
                     !_httpContext.GetTenantId().HasValue || 
+                    x.TenantId == _httpContext.GetTenantId());
+            modelBuilder.Entity<Event>()
+                .HasQueryFilter(x =>
+                    !_httpContext.GetTenantId().HasValue ||
                     x.TenantId == _httpContext.GetTenantId());
         }
 

@@ -11,5 +11,6 @@ namespace EE579.Core.Slices.Rules
 {
     public interface IRuleService : ICrudAppService<Rule, RuleDtoInput>
     {
+        public Task<List<EventDto>> GetEvents();
     }
 }

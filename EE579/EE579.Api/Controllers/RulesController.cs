@@ -90,5 +90,18 @@ namespace EE579.Api.Controllers
         {
             throw new NotImplementedException();
         }
+
+        /// <remarks>
+        /// Gets the event log for the current tenant
+        /// </remarks>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [RequiresTenant]
+        [HttpGet]
+        public async Task<IActionResult> GetEvents()
+        {
+            var events = await _ruleService.GetEvents();
+
+            return Ok(new ApiList<EventDto>(events));
+        }
     }
 }

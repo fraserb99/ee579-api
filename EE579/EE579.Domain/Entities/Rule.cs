@@ -11,5 +11,6 @@ namespace EE579.Domain.Entities
         public string Name { get; set; }
         public virtual ICollection<RuleInput> Inputs { get; set; }
         public virtual ICollection<RuleOutput> Outputs { get; set; }
+        public virtual ICollection<Event> Events { get; set; }
     }
 }

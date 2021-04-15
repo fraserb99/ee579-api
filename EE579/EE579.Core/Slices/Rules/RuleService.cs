@@ -15,5 +15,11 @@ namespace EE579.Core.Slices.Rules
     {
         public RuleService(DatabaseContext repository, IMapper mapper) 
             : base(repository, mapper) { }
+
+        public async Task<List<EventDto>> GetEvents()
+        {
+            var ruleEvents = Repository.Events.Where(x => x.Timestamp >= DateTime.Now.AddDays(-7)).ToList();
+            return Mapper.Map<List<EventDto>>(ruleEvents);
+        }
     }
 }
