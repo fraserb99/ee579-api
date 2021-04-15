@@ -40,7 +40,7 @@ namespace EE579.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var rules = _ruleService.GetAll();
+            var rules = await _ruleService.GetAll();
 
             return Ok(new ApiList<RuleDto>(_mapper.Map<List<RuleDto>>(rules)));
         }
@@ -58,7 +58,7 @@ namespace EE579.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var rule = _ruleService.Create(input);
+            var rule = await _ruleService.Create(input);
 
             return Ok(new ApiList<RuleDto>(_mapper.Map<RuleDto>(rule)));
         }

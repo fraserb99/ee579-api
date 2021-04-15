@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using EE579.Core.Slices.Rules.Models;
+using EE579.Core.Slices.Rules.Models.Outputs;
 using EE579.Domain;
 using EE579.Domain.Entities;
 using EE579.Domain.Entities.Inputs;
@@ -29,7 +30,7 @@ namespace EE579.Core.Slices.Rules.Mapping
                 return existing;
 
             var mapper = context.Mapper;
-            return source.OutputType switch
+            return source.Type switch
                 {
                     OutputType.BuzzerBeep => mapper.Map<BuzzerBeepOutput>(source),
                     OutputType.LedBlink => mapper.Map<LedBlinkOutput>(source),
@@ -40,6 +41,32 @@ namespace EE579.Core.Slices.Rules.Mapping
                     OutputType.LedOutput => mapper.Map<LedOutput>(source),
                     _ => null,
                 };
+        }
+    }
+
+    public class RuleOutputDtoConverter : ITypeConverter<RuleOutput, RuleOutputDto>
+    {
+        private readonly DatabaseContext _context;
+
+        public RuleOutputDtoConverter(DatabaseContext context)
+        {
+            _context = context;
+        }
+
+        public RuleOutputDto Convert(RuleOutput source, RuleOutputDto destination, ResolutionContext context)
+        {
+            var mapper = context.Mapper;
+            return source.Type switch
+            {
+                //Type.BuzzerBeep => mapper.Map<BuzzerBeepOutput>(source),
+                OutputType.LedBlink => mapper.Map<LedBlinkOutputDto>(source),
+                OutputType.BuzzerOn => mapper.Map<BuzzerOnOutputDto>(source),
+                //Type.LedBreathe => mapper.Map<LedBreatheOutputD>(source),
+                //Type.LedCycle => mapper.Map<LedCycleOutput>(source),
+                //Type.LedFade => mapper.Map<LedFadeOutput>(source),
+                //Type.LedOutput => mapper.Map<LedOutput>(source),
+                _ => null,
+            };
         }
     }
 }

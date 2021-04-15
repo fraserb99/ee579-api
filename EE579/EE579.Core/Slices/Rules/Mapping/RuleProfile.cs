@@ -9,6 +9,7 @@ using EE579.Core.Slices.Devices.Mapping;
 using EE579.Core.Slices.Devices.Models;
 using EE579.Core.Slices.Rules.Models;
 using EE579.Core.Slices.Rules.Models.Inputs;
+using EE579.Core.Slices.Rules.Models.Outputs;
 using EE579.Domain.Entities;
 using EE579.Domain.Entities.Inputs;
 using EE579.Domain.Entities.Output;
@@ -31,11 +32,25 @@ namespace EE579.Core.Slices.Rules.Mapping
             
             CreateMap<RuleInputDto, RuleInput>()
                 .ConvertUsing<RuleInputConverter>();
-            CreateMap<RuleInputDto, ButtonPushedInput>();
+            CreateMap<ButtonPushedInputDto, ButtonPushedInput>();
+            CreateMap<AnalogueValueInputDto, SwitchInput>();
+            CreateMap<AnalogueValueInputDto, PotentiometerInput>();
+            CreateMap<AnalogueValueInputDto, TemperatureInput>();
 
             CreateMap<RuleOutputDto, RuleOutput>()
                 .ConvertUsing<RuleOutputConverter>();
-            CreateMap<RuleOutputDto, BuzzerOnOutput>();
+            CreateMap<BuzzerOnOutputDto, BuzzerOnOutput>();
+
+            CreateMap<RuleInput, RuleInputDto>()
+                .ConvertUsing<RuleInputDtoConverter>();
+            CreateMap<ButtonPushedInput, ButtonPushedInputDto>();
+            CreateMap<SwitchInput, AnalogueValueInputDto>();
+            CreateMap<PotentiometerInput, AnalogueValueInputDto>();
+            CreateMap<TemperatureInput, AnalogueValueInputDto>();
+
+            CreateMap<RuleOutput, RuleOutputDto>()
+                .ConvertUsing<RuleOutputDtoConverter>();
+            CreateMap<BuzzerOnOutput, BuzzerOnOutputDto>();
         }
     }
 }

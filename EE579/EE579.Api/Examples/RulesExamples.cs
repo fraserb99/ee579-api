@@ -19,7 +19,7 @@ namespace EE579.Api.Examples
             {
                 Id = Guid.NewGuid(),
                 Name = "Rule 1",
-                Inputs = new List<dynamic>()
+                Inputs = new List<RuleInputDto>()
                 {
                     new ButtonPushedInputDto()
                     {
@@ -33,7 +33,7 @@ namespace EE579.Api.Examples
                         Duration = 1000
                     }
                 },
-                Outputs = new List<dynamic>
+                Outputs = new List<RuleOutputDto>
                 {
                     new BuzzerOnOutputDto()
                     {
@@ -43,7 +43,7 @@ namespace EE579.Api.Examples
                             DeviceState = DeviceState.Claimed,
                             Name = "Ross' Msp430"
                         },
-                        OutputType = OutputType.BuzzerOn,
+                        Type = OutputType.BuzzerOn,
                         Duration = 5000
                     },
                     new LedBlinkOutputDto()
@@ -56,7 +56,7 @@ namespace EE579.Api.Examples
                         },
                         Peripheral = LedPeripheral.Led3,
                         Colour = LedColour.Green,
-                        OutputType = OutputType.LedBlink,
+                        Type = OutputType.LedBlink,
                         Period = 500
                     }
                 }
@@ -76,7 +76,7 @@ namespace EE579.Api.Examples
                     {
                         Id = Guid.NewGuid(),
                         Name = "Rule 1",
-                        Inputs = new List<dynamic>()
+                        Inputs = new List<RuleInputDto>()
                         {
                             new ButtonPushedInputDto()
                             {
@@ -90,7 +90,7 @@ namespace EE579.Api.Examples
                                 Duration = 1000
                             }
                         },
-                        Outputs = new List<dynamic>
+                        Outputs = new List<RuleOutputDto>
                         {
                             new BuzzerOnOutputDto()
                             {
@@ -100,7 +100,7 @@ namespace EE579.Api.Examples
                                     DeviceState = DeviceState.Claimed,
                                     Name = "Ross' Msp430"
                                 },
-                                OutputType = OutputType.BuzzerOn,
+                                Type = OutputType.BuzzerOn,
                                 Duration = 5000
                             },
                             new LedBlinkOutputDto()
@@ -113,7 +113,7 @@ namespace EE579.Api.Examples
                                 },
                                 Peripheral = LedPeripheral.Led3,
                                 Colour = LedColour.Green,
-                                OutputType = OutputType.LedBlink,
+                                Type = OutputType.LedBlink,
                                 Period = 500
                             }
                         }

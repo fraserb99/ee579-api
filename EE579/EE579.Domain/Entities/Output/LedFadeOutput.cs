@@ -13,20 +13,19 @@ namespace EE579.Domain.Entities.Output
             : base(OutputType.LedFade) { }
 
         public int Period { get; set; }
-        public LedColour Colour { get; set; }
+        public LedColour? Colour { get; set; }
         public LedPeripheral Peripheral { get; set; }
 
         protected override CloudToDeviceMessage CreateMessageCore()
         {
-            return new OutputMessage(OutputType, Peripheral);
+            return new OutputMessage(Type, Peripheral);
         }
         protected override object BuildMessageBody()
         {
-            return new
-            {
-                Period,
-                Colour,
-            };
+            if (Peripheral == LedPeripheral.Led3)
+                return new { Period, Colour };
+
+            return new { Period };
         }
     }
 }

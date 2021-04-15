@@ -43,4 +43,29 @@ namespace EE579.Core.Slices.Rules.Mapping
             return mapped;
         }
     }
+
+    public class RuleInputDtoConverter : ITypeConverter<RuleInput, RuleInputDto>
+    {
+        private readonly DatabaseContext _context;
+
+        public RuleInputDtoConverter(DatabaseContext context)
+        {
+            _context = context;
+        }
+
+        public RuleInputDto Convert(RuleInput source, RuleInputDto destination, ResolutionContext context)
+        {
+            var mapper = context.Mapper;
+            RuleInputDto mapped = source.Type switch
+            {
+                InputType.ButtonPushed => mapper.Map<ButtonPushedInputDto>(source),
+                InputType.Switch => mapper.Map<SwitchInputDto>(source),
+                InputType.Potentiometer => mapper.Map<AnalogueValueInputDto>(source),
+                InputType.Temperature => mapper.Map<AnalogueValueInputDto>(source),
+                _ => null,
+            };
+
+            return mapped;
+        }
+    }
 }

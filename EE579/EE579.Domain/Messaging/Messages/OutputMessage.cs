@@ -12,18 +12,18 @@ namespace EE579.Core.Slices.IotHub.Messages
     {
         public OutputMessage(OutputType outputType)
         {
-            Properties.Add("OutputType", outputType.ToString());
+            Properties.Add("Type", outputType.ToString());
         }
 
         public OutputMessage(OutputType outputType, string peripheral)
         {
-            Properties.Add("OutputType", outputType.ToString());
+            Properties.Add("Type", outputType.ToString());
             Properties.Add("Peripheral", peripheral);
         }
 
         public OutputMessage(OutputType outputType, Enum peripheral)
         {
-            Properties.Add("OutputType", outputType.ToString());
+            Properties.Add("Type", outputType.ToString());
             Properties.Add("Peripheral", peripheral.ToString());
         }
     }

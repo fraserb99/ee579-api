@@ -35,7 +35,7 @@ namespace EE579.Core.Slices.IotHub.Impl
         //    var msg = new Message(Encoding.ASCII.GetBytes(body_));
 
 
-        //    msg.Properties.Add("OutputType", propertyBag.GetOutputType());
+        //    msg.Properties.Add("Type", propertyBag.GetOutputType());
         //    var periph = propertyBag.GetPeripheral();
         //    if(periph != null)
         //        msg.Properties.Add("Peripheral", prop)

@@ -15,12 +15,12 @@ namespace EE579.Core.Slices.Rules.Models
         /// A list of RuleInputDtos
         /// </summary>
         [Required]
-        public List<dynamic> Inputs { get; set; }
+        public List<RuleInputDto> Inputs { get; set; }
 
         /// <summary>
         /// A list of RuleOutputDtos
         /// </summary>
         [Required]
-        public List<dynamic> Outputs { get; set; }
+        public List<RuleOutputDto> Outputs { get; set; }
     }
 }
