@@ -134,6 +134,7 @@ namespace EE579.Core.Slices.Devices
 
             device = Mapper.Map(input, device);
             device.TenantId = _httpContext.GetTenantId();
+            device.WebId = Guid.NewGuid();
             await Repository.SaveChangesAsync();
 
             return device;

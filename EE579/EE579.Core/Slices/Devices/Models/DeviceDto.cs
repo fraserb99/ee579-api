@@ -17,5 +17,6 @@ namespace EE579.Core.Slices.Devices.Models
         public DeviceState DeviceState { get; set; }
 
         public ConnectionState ConnectionState { get; set; }
+        public string WebUrl { get; set; }
     }
 }
