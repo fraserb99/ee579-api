@@ -16,7 +16,7 @@ namespace EE579.Core.Slices.Rules.Processing
     public abstract class RuleProcessor<TRuleInput, TMessageBody> : IRuleProcessor where TRuleInput : RuleInput
     {
         protected readonly DatabaseContext _context;
-        private readonly ProcessEventArgs _args;
+        protected readonly ProcessEventArgs _args;
         protected readonly TMessageBody MessageBody;
 
         protected RuleProcessor(ProcessEventArgs args, IConfiguration configuration)

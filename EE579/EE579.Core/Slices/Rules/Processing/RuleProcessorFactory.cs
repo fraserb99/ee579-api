@@ -15,7 +15,16 @@ namespace EE579.Core.Slices.Rules.Processing
         {
             var type = args.GetInputType();
 
-            return new ButtonPushedProcessor(args, config);
+            switch (type)
+            {
+                case InputType.ButtonPushed:
+                    return new ButtonPushedProcessor(args, config);
+                case InputType.Switch:
+                    return new SwitchFlippedProcessor(args, config);
+                default:
+                    return null;
+            }
+            
         }
     }
 }
