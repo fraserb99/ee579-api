@@ -10,9 +10,8 @@ using EE579.Core.Infrastructure.Exceptions.Models;
 using EE579.Core.Infrastructure.Extensions;
 using EE579.Core.Infrastructure.Services;
 using EE579.Core.Slices.Devices.Models;
-using EE579.Core.Slices.IotHub;
-using EE579.Core.Slices.IotHub.Models;
-using EE579.Core.Slices.IotHub.Models.MsgBodies;
+using EE579.Core.Slices.IotHub.Impl;
+using EE579.Core.Slices.IotHub.Messages;
 using EE579.Core.Slices.Tenants;
 using EE579.Domain;
 using EE579.Domain.Entities;
@@ -42,15 +41,13 @@ namespace EE579.Core.Slices.Devices
 
         private readonly HttpContext _httpContext;
         private readonly ICurrentTenant _currentTenant;
-        private readonly IIotMessagingService _messagingService;
 
-        public DeviceService(DatabaseContext context, IMapper mapper, IHttpContextAccessor httpContext, ICurrentTenant currentTenant, IIotMessagingService msgSrv)
+        public DeviceService(DatabaseContext context, IMapper mapper, IHttpContextAccessor httpContext, ICurrentTenant currentTenant)
             : base(context, mapper)
         {
             _registry = RegistryManager.CreateFromConnectionString(IotHubConnectionString);
             _httpContext = httpContext.HttpContext;
             _currentTenant = currentTenant;
-            _messagingService = msgSrv;
         }
         public async Task<DeviceRegistrationDto> Register(string deviceId)
         {
@@ -112,13 +109,16 @@ namespace EE579.Core.Slices.Devices
             if (device == null) 
                 throw new HttpStatusCodeException(404);
 
-            var ledBlinkPropertyBag = new OutputPropertyBag("LedBlink", "Led1");
-            var msgBody = new PeriodColourBody {
-                Period = 10,
-                Colour = LedColourEnum.Purple
+            var message = new OutputMessage(OutputType.LedBlink, LedPeripheral.Led1)
+            {
+                Body = new
+                {
+                    Period = 10,
+                    Colour = LedColour.White
+                }
             };
 
-            await _messagingService.SendMessage(deviceId, ledBlinkPropertyBag.GetPropertyBag(), msgBody);
+            await IotMessagingService.SendMessage(deviceId, message);
            
         }
 

@@ -10,6 +10,7 @@ using EE579.Core.Slices.Auth.Models;
 using EE579.Core.Slices.Devices;
 using EE579.Core.Slices.Devices.Models;
 using EE579.Core.Slices.IotHub;
+using EE579.Core.Slices.IotHub.Impl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -25,12 +26,10 @@ namespace EE579.Api.Controllers
     [Route("[controller]")]
     public class DevicesController : ControllerBase
     {
-        private readonly IIotMessagingService _messagingService;
         private readonly IDeviceService _deviceService;
         private readonly IMapper _mapper;
-        public DevicesController(IIotMessagingService msgSrv, IDeviceService deviceService, IMapper mapper)
+        public DevicesController(IDeviceService deviceService, IMapper mapper)
         {
-            _messagingService = msgSrv;
             _deviceService = deviceService;
             _mapper = mapper;
         }
@@ -149,7 +148,7 @@ namespace EE579.Api.Controllers
         [Route("dk")]
         public async Task<IActionResult> IotTest()
         {
-            await _messagingService.SendMessage("00:0a:95:9d:68:16", new Dictionary<string, string>(), "dk");
+            await IotMessagingService.SendMessage("00:0a:95:9d:68:16", new Dictionary<string, string>(), "dk");
             return Ok();
         }
     }

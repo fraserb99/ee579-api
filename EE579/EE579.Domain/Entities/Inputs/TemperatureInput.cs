@@ -11,5 +11,6 @@ namespace EE579.Domain.Entities.Inputs
             : base(InputType.Temperature) { }
         public int LessThan { get; set; }
         public int GreaterThan { get; set; }
+        public int LastValue { get; set; }
     }
 }

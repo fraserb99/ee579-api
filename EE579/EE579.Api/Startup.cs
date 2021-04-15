@@ -128,7 +128,6 @@ namespace EE579.Api
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<ICurrentUser, CurrentUser>();
-            services.AddTransient<IIotMessagingService, IotMessagingService>();
             services.AddTransient<IDeviceService, DeviceService>();
             services.AddTransient<IDeviceGroupService, DeviceGroupService>();
             services.AddTransient<ITenantService, TenantService>();

@@ -10,6 +10,7 @@ using Azure.Messaging.EventHubs.Consumer;
 using Azure.Messaging.EventHubs.Processor;
 using Azure.Storage.Blobs;
 using EE579.Core.Slices.IotHub.Models;
+using EE579.Core.Slices.Rules.Processing;
 using EE579.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -95,9 +96,16 @@ namespace EE579.Core.Slices.IotHub
         {
             try
             {
-                Console.WriteLine(args.Data.EnqueuedTime.DateTime.ToString() + ": " + args.Data.EventBody.ToString());
+                Console.WriteLine(args.Data.EnqueuedTime.DateTime + ": " + args.Data.EventBody);
+                await using var ruleProcessor = RuleProcessorFactory.CreateRuleProcessor(args, _configuration);
+
+                await ruleProcessor?.ProcessInput();
+                args.UpdateCheckpointAsync();
             }
-            catch { }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         private async Task ProcessErrorHandler(ProcessErrorEventArgs args)
