@@ -46,6 +46,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using EE579.Core.Slices.WebHooks;
+using EE579.Core.Slices.WebHooks.Impl;
 
 namespace EE579.Api
 {
@@ -137,6 +139,7 @@ namespace EE579.Api
             services.AddTransient<ICurrentTenant, CurrentTenant>();
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IRuleService, RuleService>();
+            services.AddTransient<IWebHookService, WebHookService>();
 
             services.AddTransient<IExternalProviderFactory, ExternalProviderFactory>();
 
