@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using EE579.Core.Slices.Devices.Models;
+using EE579.Domain.Entities;
 
 namespace EE579.Core.Slices.DeviceGroups.Models
 {
-    public class DeviceGroupDto
+    public class DeviceGroupDto : Entity<Guid>
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public int TotalDevices { get; set; }
         /// <summary>

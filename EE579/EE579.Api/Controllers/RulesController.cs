@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using EE579.Api.Examples;
 using EE579.Api.Infrastructure.Attributes;
 using EE579.Core.Models;
+using EE579.Core.Slices.Rules;
 using EE579.Core.Slices.Rules.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +22,15 @@ namespace EE579.Api.Controllers
     [Route("[controller]")]
     public class RulesController : ControllerBase
     {
+        private readonly IRuleService _ruleService;
+        private readonly IMapper _mapper;
+
+        public RulesController(IRuleService ruleService, IMapper mapper)
+        {
+            _ruleService = ruleService;
+            _mapper = mapper;
+        }
+
         /// <remarks>
         /// Gets a list of rules set up in the current client
         /// </remarks>
@@ -27,9 +38,11 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [RequiresTenant]
         [HttpGet]
-        public async Task<ApiList<RuleDto>> Get()
+        public async Task<IActionResult> Get()
         {
-            throw new NotImplementedException();
+            var rules = _ruleService.GetAll();
+
+            return Ok(new ApiList<RuleDto>(_mapper.Map<List<RuleDto>>(rules)));
         }
 
         /// <remarks>
@@ -40,9 +53,14 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(typeof(FormErrorResponse), StatusCodes.Status400BadRequest)]
         [RequiresTenant]
         [HttpPost]
-        public async Task<RuleDto> Create([FromBody] RuleInputDto input)
+        public async Task<IActionResult> Create([FromBody] RuleDtoInput input)
         {
-            throw new NotImplementedException();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var rule = _ruleService.Create(input);
+
+            return Ok(new ApiList<RuleDto>(_mapper.Map<RuleDto>(rule)));
         }
 
         /// <remarks>
@@ -54,9 +72,11 @@ namespace EE579.Api.Controllers
         [RequiresTenant]
         [HttpPut]
         [Route("{ruleId}")]
-        public async Task<RuleDto> Update(string ruleId, [FromBody] RuleInputDto input)
+        public async Task<IActionResult> Update(Guid ruleId, [FromBody] RuleDtoInput input)
         {
-            throw new NotImplementedException();
+            var rule = _ruleService.Update(ruleId, input);
+
+            return Ok(new ApiList<RuleDto>(_mapper.Map<RuleDto>(rule)));
         }
 
         /// <remarks>

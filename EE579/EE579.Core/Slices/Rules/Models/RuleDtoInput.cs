@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using EE579.Core.Slices.Devices.Models;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using EE579.Core.Slices.Rules.Mapping;
 
 namespace EE579.Core.Slices.Rules.Models
 {
-    public class RuleDto
+    public class RuleDtoInput
     {
-        [Required]
-        public Guid Id { get; set; }
         public string Name { get; set; }
 
         /// <summary>
         /// A list of RuleInputDtos
         /// </summary>
         [Required]
-        public List<dynamic> Inputs { get; set; }
+        public List<RuleInputDto> Inputs { get; set; }
 
         /// <summary>
         /// A list of RuleOutputDtos
         /// </summary>
         [Required]
-        public List<dynamic> Outputs { get; set; }
+        public List<object> Outputs { get; set; }
     }
 }
