@@ -8,6 +8,7 @@ namespace EE579.Core.Slices.Rules.Models.Inputs
 {
     public class AnalogueValueInputDto : RuleInputDto
     {
-        public int Value { get; set; }
+        public int GreaterThan { get; set; }
+        public int LessThan { get; set; }
     }
 }

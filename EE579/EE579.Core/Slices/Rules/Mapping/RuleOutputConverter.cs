@@ -58,13 +58,13 @@ namespace EE579.Core.Slices.Rules.Mapping
             var mapper = context.Mapper;
             return source.Type switch
             {
-                //Type.BuzzerBeep => mapper.Map<BuzzerBeepOutput>(source),
-                OutputType.LedBlink => mapper.Map<LedBlinkOutputDto>(source),
+                OutputType.BuzzerBeep => mapper.Map<BuzzerBeepOutputDto>(source),
+                OutputType.LedBlink => mapper.Map<LedPeriodOutputDto>(source),
                 OutputType.BuzzerOn => mapper.Map<BuzzerOnOutputDto>(source),
-                //Type.LedBreathe => mapper.Map<LedBreatheOutputD>(source),
-                //Type.LedCycle => mapper.Map<LedCycleOutput>(source),
-                //Type.LedFade => mapper.Map<LedFadeOutput>(source),
-                //Type.LedOutput => mapper.Map<LedOutput>(source),
+                OutputType.LedBreathe => mapper.Map<LedPeriodOutputDto>(source),
+                OutputType.LedCycle => mapper.Map<LedCycleOutputDto>(source),
+                OutputType.LedFade => mapper.Map<LedPeriodOutputDto>(source),
+                OutputType.LedOutput => mapper.Map<LedOutputDto>(source),
                 _ => null,
             };
         }

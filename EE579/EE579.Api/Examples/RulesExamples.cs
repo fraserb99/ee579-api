@@ -46,7 +46,7 @@ namespace EE579.Api.Examples
                         Type = OutputType.BuzzerOn,
                         Duration = 5000
                     },
-                    new LedBlinkOutputDto()
+                    new LedPeriodOutputDto()
                     {
                         Device = new DeviceDto
                         {
@@ -103,7 +103,7 @@ namespace EE579.Api.Examples
                                 Type = OutputType.BuzzerOn,
                                 Duration = 5000
                             },
-                            new LedBlinkOutputDto()
+                            new LedPeriodOutputDto()
                             {
                                 Device = new DeviceDto
                                 {
