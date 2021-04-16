@@ -39,7 +39,9 @@ namespace EE579.Core.Slices.Rules.Processing
             var inputType = _args.GetInputType();
 
             var deviceInputRules = _context.Set<TRuleInput>()
-                .Where(x => x.Device.Id == deviceId && x.Type == inputType);
+                .Where(x => x.Type == inputType && (
+                    x.Device.Id == deviceId || x.DeviceGroup.Devices.Any(y => y.Id == deviceId)
+                ));
 
             return await GetTriggeredCore(deviceInputRules);
         }
