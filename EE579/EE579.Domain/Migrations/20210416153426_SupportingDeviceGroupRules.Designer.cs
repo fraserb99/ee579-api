@@ -4,14 +4,16 @@ using EE579.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EE579.Domain.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210416153426_SupportingDeviceGroupRules")]
+    partial class SupportingDeviceGroupRules
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,9 +56,6 @@ namespace EE579.Domain.Migrations
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("WebId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TenantId");
@@ -82,30 +81,6 @@ namespace EE579.Domain.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("DeviceGroups");
-                });
-
-            modelBuilder.Entity("EE579.Domain.Entities.Event", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RuleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RuleId");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("EE579.Domain.Entities.Rule", b =>
@@ -649,23 +624,6 @@ namespace EE579.Domain.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("EE579.Domain.Entities.Event", b =>
-                {
-                    b.HasOne("EE579.Domain.Entities.Rule", "Rule")
-                        .WithMany("Events")
-                        .HasForeignKey("RuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EE579.Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId");
-
-                    b.Navigation("Rule");
-
-                    b.Navigation("Tenant");
-                });
-
             modelBuilder.Entity("EE579.Domain.Entities.Rule", b =>
                 {
                     b.HasOne("EE579.Domain.Entities.Tenant", "Tenant")
@@ -815,8 +773,6 @@ namespace EE579.Domain.Migrations
 
             modelBuilder.Entity("EE579.Domain.Entities.Rule", b =>
                 {
-                    b.Navigation("Events");
-
                     b.Navigation("Inputs");
 
                     b.Navigation("Outputs");

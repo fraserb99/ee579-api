@@ -19,7 +19,9 @@ namespace EE579.Core.Slices.Devices.Mapping
 
         public TEntity Convert(Entity<TId> source, TEntity destination, ResolutionContext context)
         {
-            return _context.Set<TEntity>().Find(source.Id);
+            return source != null
+                ? _context.Set<TEntity>().Find(source.Id)
+                : null;
         }
     }
 }

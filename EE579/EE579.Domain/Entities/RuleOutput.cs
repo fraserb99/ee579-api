@@ -16,8 +16,8 @@ namespace EE579.Domain.Entities
         {
             Type = type;
         }
-        [Required]
         public virtual Device Device { get; set; }
+        public virtual DeviceGroup DeviceGroup { get; set; }
         [Required]
         public OutputType Type { get; set; }
 

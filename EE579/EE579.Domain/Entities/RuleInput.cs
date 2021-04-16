@@ -15,8 +15,8 @@ namespace EE579.Domain.Entities
         public Guid RuleId { get; set; }
 
         public virtual Rule Rule { get; set; }
-        [Required]
         public virtual Device Device { get; set; }
+        public virtual DeviceGroup DeviceGroup { get; set; }
         [Required]
         public InputType Type { get; set; }
     }
