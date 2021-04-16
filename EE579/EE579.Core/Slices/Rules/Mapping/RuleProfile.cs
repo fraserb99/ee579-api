@@ -43,6 +43,12 @@ namespace EE579.Core.Slices.Rules.Mapping
             CreateMap<Event, EventDto>()
                 .ForMember(x => x.Name, opts => opts.MapFrom(y => y.Rule.Name));
             CreateMap<BuzzerOnOutputDto, BuzzerOnOutput>();
+            CreateMap<BuzzerBeepOutputDto, BuzzerBeepOutput>();
+            CreateMap<LedCycleOutputDto, LedCycleOutput>();
+            CreateMap<LedOutputDto, LedOutput>();
+            CreateMap<LedPeriodOutputDto, LedBlinkOutput>();
+            CreateMap<LedPeriodOutputDto, LedBreatheOutput>();
+            CreateMap<LedPeriodOutputDto, LedFadeOutput>();
 
             CreateMap<RuleInput, RuleInputDto>()
                 .ConvertUsing<RuleInputDtoConverter>();
@@ -54,6 +60,13 @@ namespace EE579.Core.Slices.Rules.Mapping
             CreateMap<RuleOutput, RuleOutputDto>()
                 .ConvertUsing<RuleOutputDtoConverter>();
             CreateMap<BuzzerOnOutput, BuzzerOnOutputDto>();
+            CreateMap<BuzzerBeepOutput, BuzzerBeepOutputDto>();
+            CreateMap<LedCycleOutput, LedCycleOutputDto>();
+            CreateMap<LedOutput, LedOutputDto>();
+            CreateMap<LedBlinkOutput, LedPeriodOutputDto>();
+            CreateMap<LedBreatheOutput, LedPeriodOutputDto>();
+            CreateMap<LedFadeOutput, LedPeriodOutputDto>();
+
         }
     }
 }
