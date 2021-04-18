@@ -97,6 +97,7 @@ namespace EE579.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [RequiresTenant]
         [HttpGet]
+        [Route("events")]
         public async Task<IActionResult> GetEvents()
         {
             var events = await _ruleService.GetEvents();
