@@ -8,9 +8,9 @@ namespace EE579.Core.Slices.Devices.Models
         /// <summary>
         /// The password that the device will send to connect to the Iot Hub MQTT broker
         /// </summary>
-        /// <example>SharedAccessSignature sr=EE579T-Iot-Hub.azure-devices.net%2Fdevices%2F00%3A0a%3A95%3A9d%3A68%3A16&amp;sig=P5ZwP6DSCBjclOl2IFEb6AkAcczdT7w1Nn8MoGBtZn0%3D&amp;se=36324632293</example>
+        /// <example>HostName=IFTTT-Iot-Hub.azure-devices.net;DeviceId=00:0a:95:9d:68:16;SharedAccessKey=El50EkQ/S/9qp5dd/V3VpsizIvSv+SA8TVF3QiGc93A=</example>
         [Required]
-        public string Password { get; set; }
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// The MQTT host that the device should connect to

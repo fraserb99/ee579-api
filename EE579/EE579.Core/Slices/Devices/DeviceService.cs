@@ -38,6 +38,9 @@ namespace EE579.Core.Slices.Devices
         private const string TopicFormat =
             "devices/{0}/messages/devicebound/#";
 
+        private const string DeviceConnectionStringFormat =
+            "HostName=IFTTT-Iot-Hub.azure-devices.net;DeviceId={0};SharedAccessKey={1}";
+
 
         private readonly HttpContext _httpContext;
         private readonly ICurrentTenant _currentTenant;
@@ -74,16 +77,9 @@ namespace EE579.Core.Slices.Devices
             hubDevice = await _registry.GetDeviceAsync(deviceId) ??
                         await _registry.AddDeviceAsync(new Microsoft.Azure.Devices.Device(deviceId));
 
-            var sasBuilder = new SharedAccessSignatureBuilder
-            {
-                Key = hubDevice.Authentication.SymmetricKey.PrimaryKey,
-                Target = string.Format(TargetFormat, hubDevice.Id),
-                TimeToLive = TimeSpan.FromDays(999999)
-            };
-
             return new DeviceRegistrationDto
             {
-                Password = sasBuilder.ToSignature(),
+                ConnectionString = string.Format(DeviceConnectionStringFormat, deviceId, hubDevice.Authentication.SymmetricKey.PrimaryKey),
                 Topic = string.Format(TopicFormat, hubDevice.Id)
             };
         }
