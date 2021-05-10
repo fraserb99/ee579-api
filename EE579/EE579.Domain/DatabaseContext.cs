@@ -48,6 +48,7 @@ namespace EE579.Domain
         public virtual DbSet<PotentiometerInput> PotInputs { get; set; }
         public virtual DbSet<TemperatureInput> TempInputs { get; set; }
         public virtual DbSet<PowerOnInput> PowerInputs { get; set; }
+        public virtual DbSet<WebhookInput> WebohookInputs { get; set; }
 
         public virtual DbSet<BuzzerBeepOutput> BuzzerBeepOutputs { get; set; }
         public virtual DbSet<BuzzerOnOutput> BuzzerOnOutputs { get; set; }

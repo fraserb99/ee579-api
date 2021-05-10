@@ -10,6 +10,7 @@ namespace EE579.Domain.Entities.Inputs
         public ButtonPushedInput() 
             : base(InputType.ButtonPushed) { }
 
+        public ButtonPeripheral Peripheral { get; set; }
         public int Duration { get; set; }
     }
 }

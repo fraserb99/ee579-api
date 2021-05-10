@@ -23,7 +23,12 @@ namespace EE579.Core.Slices.Rules.Processing
         {
             _context = GetContext(configuration);
             _args = args;
-            MessageBody = _args.Data.EventBody.ToObjectFromJson<TMessageBody>();
+            MessageBody = GetMessageBody();
+        }
+
+        protected virtual TMessageBody GetMessageBody()
+        {
+            return _args.Data.EventBody.ToObjectFromJson<TMessageBody>();
         }
 
         public async Task ProcessInput()

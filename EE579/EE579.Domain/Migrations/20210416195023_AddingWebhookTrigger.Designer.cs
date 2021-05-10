@@ -4,14 +4,16 @@ using EE579.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EE579.Domain.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210416195023_AddingWebhookTrigger")]
+    partial class AddingWebhookTrigger
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -448,10 +450,6 @@ namespace EE579.Domain.Migrations
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
-
-                    b.Property<int>("Peripheral")
-                        .HasColumnType("int")
-                        .HasColumnName("ButtonPushedInput_Peripheral");
 
                     b.HasDiscriminator().HasValue("ButtonPushedInput");
                 });

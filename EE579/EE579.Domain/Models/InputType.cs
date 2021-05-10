@@ -6,6 +6,7 @@
         Switch,
         Temperature,
         Potentiometer,
-        Power
+        Power,
+        Webhook
     }
 }

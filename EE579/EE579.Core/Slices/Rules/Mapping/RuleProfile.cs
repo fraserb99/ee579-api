@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -36,6 +37,8 @@ namespace EE579.Core.Slices.Rules.Mapping
             CreateMap<AnalogueValueInputDto, SwitchInput>();
             CreateMap<AnalogueValueInputDto, PotentiometerInput>();
             CreateMap<AnalogueValueInputDto, TemperatureInput>();
+            CreateMap<WebhookInputDto, WebhookInput>()
+                .AfterMap<MapWebhookCode>();
 
             CreateMap<RuleOutputDto, RuleOutput>()
                 .ConvertUsing<RuleOutputConverter>();
@@ -56,6 +59,8 @@ namespace EE579.Core.Slices.Rules.Mapping
             CreateMap<SwitchInput, AnalogueValueInputDto>();
             CreateMap<PotentiometerInput, AnalogueValueInputDto>();
             CreateMap<TemperatureInput, AnalogueValueInputDto>();
+            CreateMap<WebhookInput, WebhookInputDto>()
+                .AfterMap<MapWebhookUrl>();
 
             CreateMap<RuleOutput, RuleOutputDto>()
                 .ConvertUsing<RuleOutputDtoConverter>();

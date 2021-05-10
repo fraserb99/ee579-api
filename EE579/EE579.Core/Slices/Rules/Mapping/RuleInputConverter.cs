@@ -37,6 +37,7 @@ namespace EE579.Core.Slices.Rules.Mapping
                 InputType.Potentiometer => mapper.Map<PotentiometerInput>(source),
                 InputType.Temperature => mapper.Map<TemperatureInput>(source),
                 InputType.Power => mapper.Map<PowerOnInput>(source),
+                InputType.Webhook => mapper.Map<WebhookInput>(source),
                 _ => null,
             };
 
@@ -62,6 +63,7 @@ namespace EE579.Core.Slices.Rules.Mapping
                 InputType.Switch => mapper.Map<SwitchInputDto>(source),
                 InputType.Potentiometer => mapper.Map<AnalogueValueInputDto>(source),
                 InputType.Temperature => mapper.Map<AnalogueValueInputDto>(source),
+                InputType.Webhook => mapper.Map<WebhookInputDto>(source),
                 _ => null,
             };
 
