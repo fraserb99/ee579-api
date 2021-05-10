@@ -21,5 +21,18 @@ namespace EE579.Core.Slices.Rules
             var ruleEvents = Repository.Events.Where(x => x.Timestamp >= DateTime.Now.AddDays(-7)).ToList();
             return Mapper.Map<List<EventDto>>(ruleEvents);
         }
+
+        public override async Task Delete(Guid id)
+        {
+            var entity = await GetById(id);
+
+            entity.Events.Clear();
+            entity.Inputs.Clear();
+            entity.Outputs.Clear();
+            entity.Tenant = null;
+
+            Repository.Remove(entity);
+            await Repository.SaveChangesAsync();
+        }
     }
 }

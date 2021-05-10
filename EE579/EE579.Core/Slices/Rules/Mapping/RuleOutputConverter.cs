@@ -33,6 +33,7 @@ namespace EE579.Core.Slices.Rules.Mapping
             return source.Type switch
                 {
                     OutputType.BuzzerBeep => mapper.Map<BuzzerBeepOutput>(source),
+                    OutputType.BuzzerOff => mapper.Map<BuzzerOffOutput>(source),
                     OutputType.LedBlink => mapper.Map<LedBlinkOutput>(source),
                     OutputType.BuzzerOn => mapper.Map<BuzzerOnOutput>(source),
                     OutputType.LedBreathe => mapper.Map<LedBreatheOutput>(source),
@@ -59,6 +60,7 @@ namespace EE579.Core.Slices.Rules.Mapping
             return source.Type switch
             {
                 OutputType.BuzzerBeep => mapper.Map<BuzzerBeepOutputDto>(source),
+                OutputType.BuzzerOff => mapper.Map<BuzzerOffOutputDto>(source),
                 OutputType.LedBlink => mapper.Map<LedPeriodOutputDto>(source),
                 OutputType.BuzzerOn => mapper.Map<BuzzerOnOutputDto>(source),
                 OutputType.LedBreathe => mapper.Map<LedPeriodOutputDto>(source),

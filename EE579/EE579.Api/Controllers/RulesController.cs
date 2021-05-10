@@ -74,7 +74,7 @@ namespace EE579.Api.Controllers
         [Route("{ruleId}")]
         public async Task<IActionResult> Update(Guid ruleId, [FromBody] RuleDtoInput input)
         {
-            var rule = _ruleService.Update(ruleId, input);
+            var rule = await _ruleService.Update(ruleId, input);
 
             return Ok(new ApiList<RuleDto>(_mapper.Map<RuleDto>(rule)));
         }
@@ -86,9 +86,9 @@ namespace EE579.Api.Controllers
         [HttpDelete]
         [RequiresTenant]
         [Route("{ruleId}")]
-        public async Task Delete(string ruleId)
+        public async Task Delete(Guid ruleId)
         {
-            throw new NotImplementedException();
+            await _ruleService.Delete(ruleId);
         }
 
         /// <remarks>

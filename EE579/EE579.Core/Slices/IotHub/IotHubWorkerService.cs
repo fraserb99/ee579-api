@@ -98,7 +98,8 @@ namespace EE579.Core.Slices.IotHub
             {
                 Console.WriteLine(args.Data.EnqueuedTime.DateTime + ": " + args.Data.EventBody);
                 await using var ruleProcessor = RuleProcessorFactory.CreateRuleProcessor(args, _configuration);
-
+                if (ruleProcessor == null) return;
+                
                 await ruleProcessor?.ProcessInput();
                 args.UpdateCheckpointAsync();
             }

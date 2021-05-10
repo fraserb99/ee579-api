@@ -9,5 +9,6 @@
         LedCycle,
         BuzzerOn,
         BuzzerBeep,
+        BuzzerOff
     }
 }
