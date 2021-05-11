@@ -2,32 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Azure.Messaging.EventHubs.Processor;
+using EE579.Core.Slices.Rules.Processing.Models;
 using EE579.Domain.Models;
 
 namespace EE579.Core.Slices.Rules.Processing
 {
     public static class IotHubEventExtensions
     {
+        static private  JsonSerializerOptions jsonOpts = new JsonSerializerOptions
+        {
+            Converters = { new JsonStringEnumConverter() }
+        };
+
         public static InputType? GetInputType(this ProcessEventArgs args)
         {
-            args.Data.Properties.TryGetValue(nameof(InputType), out var inputTypeString);
-
-            if (Enum.TryParse<InputType>(inputTypeString?.ToString(), true, out var inputType))
-                return inputType;
-
-            return null;
+            try
+            {
+                var type = args.Data.EventBody.ToObjectFromJson<InputTypeBody<InputType>>(jsonOpts).InputType;
+                return type;
+            }
+            catch (Exception _)
+            {
+                var peripheral = args.Data.EventBody.ToObjectFromJson<InputTypeBody<ButtonPeripheral>>(jsonOpts).InputType;
+                return InputType.ButtonPushed;
+            }
         }
 
         public static TEnum? GetPeripheral<TEnum>(this ProcessEventArgs args) where TEnum : struct
         {
-            args.Data.Properties.TryGetValue("Peripheral", out var inputTypeString);
+            var peripheral = args.Data.EventBody.ToObjectFromJson<PeripheralBody<TEnum>>().Peripheral;
 
-            if (Enum.TryParse<TEnum>(inputTypeString?.ToString(), true, out var inputType))
-                return inputType;
-
-            return null;
+            return peripheral;
         }
 
         public static string GetDeviceId(this ProcessEventArgs args)

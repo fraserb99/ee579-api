@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EE579.Core.Slices.IotHub.Models;
 using Microsoft.Azure.Devices;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace EE579.Core.Slices.IotHub.Impl
 {
@@ -16,10 +17,12 @@ namespace EE579.Core.Slices.IotHub.Impl
         public static async Task SendMessage(string deviceId, Dictionary<string, string> propertyBag, object bodyObj)
         {
             string body = JsonConvert.SerializeObject(bodyObj);
-            var message = new Message(Encoding.ASCII.GetBytes(body));
-
+            var jObj = JObject.Parse(body);
             foreach (var property in propertyBag)
-                message.Properties.Add(property.Key, property.Value);
+                jObj.Add(property.Key, property.Value);
+            body = jObj.ToString(Formatting.None);
+
+            var message = new Message(Encoding.ASCII.GetBytes(body));
 
             await _serviceClient.SendAsync(deviceId, message);
         }
