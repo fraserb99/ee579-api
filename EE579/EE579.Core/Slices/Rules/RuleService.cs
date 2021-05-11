@@ -22,15 +22,47 @@ namespace EE579.Core.Slices.Rules
             return Mapper.Map<List<EventDto>>(ruleEvents);
         }
 
+        public override async Task<Rule> Update(Guid id, RuleDtoInput input)
+        {
+            var oldDevices = Repository.Rules.Find(input.Id).Inputs.Select(x => x.Device);
+            var rule = await base.Update(id, input);
+            var devices = rule.Inputs.Select(x => x.Device);
+            foreach (var device in devices)
+            {
+                device.NotifyOfInputs();
+            }
+            var devicesRemoved = oldDevices.Except(devices);
+            foreach (var device in devicesRemoved)
+            {
+                device.NotifyOfInputs();
+            }
+            return rule;
+        }
+        public override async Task<Rule> Create(RuleDtoInput input)
+        {
+            var rule = await base.Create(input);
+            var devices = rule.Inputs.Select(x => x.Device);
+            foreach (var device in devices)
+            {
+                device.NotifyOfInputs();
+            }
+            
+            return rule;
+        }
+
         public override async Task Delete(Guid id)
         {
             var entity = await GetById(id);
-
+            
             entity.Events.Clear();
             entity.Inputs.Clear();
             entity.Outputs.Clear();
             entity.Tenant = null;
-
+            var devices = entity.Inputs.Select(x => x.Device);
+            foreach (var device in devices)
+            {
+                device.NotifyOfInputs();
+            }
             Repository.Remove(entity);
             await Repository.SaveChangesAsync();
         }
