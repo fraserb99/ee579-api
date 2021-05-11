@@ -27,7 +27,7 @@ namespace EE579.Core.Slices.Rules.Mapping
         {
             var existing = _context.RuleOutputs.Find(source.Id);
             if (existing != null)
-                return existing;
+                return context.Mapper.Map(source, destination);
 
             var mapper = context.Mapper;
             return source.Type switch
