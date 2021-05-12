@@ -21,9 +21,18 @@ namespace EE579.Core.Slices.Rules.Processing
 
         protected override async Task<IEnumerable<Rule>> GetTriggeredCore(IQueryable<ButtonPushedInput> rules)
         {
+            var body = GetMessageBody();
+
             var triggered = await rules
-                .Where(x => x.Peripheral == _args.GetPeripheral<ButtonPeripheral>() && 
-                            x.Duration <= MessageBody.Duration)
+                .Where(x => x.Peripheral == body.InputType && 
+                            x.Duration <= MessageBody.Duration && MessageBody.Duration < 
+                            (x.Duration < 2000 ?
+                                2000
+                                :
+                                x.Duration < 10000 ?
+                            10000
+                            :
+                            int.MaxValue))
                 .Select(x => x.Rule)
                 .ToListAsync();
 

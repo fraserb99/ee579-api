@@ -99,6 +99,9 @@ namespace EE579.Domain.Migrations
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("TriggeredCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("DeviceMessages");

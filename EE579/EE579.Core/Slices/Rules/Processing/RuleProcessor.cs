@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.EventHubs.Processor;
@@ -31,20 +32,26 @@ namespace EE579.Core.Slices.Rules.Processing
 
         protected virtual TMessageBody GetMessageBody()
         {
-            return _args.Data.EventBody.ToObjectFromJson<TMessageBody>();
+            var jsonOpts = new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() }
+            };
+
+            return _args.Data.EventBody.ToObjectFromJson<TMessageBody>(jsonOpts);
         }
 
         public async Task ProcessInput()
         {
+            var triggered = await GetTriggeredRules();
+
             await _context.AddAsync(new DeviceMessage
             {
                 DeviceId = _args.GetDeviceId(),
                 MessageBody = JsonSerializer.Serialize(GetMessageBody()),
-                TimeStamp = DateTime.Now
+                TimeStamp = DateTime.Now,
+                TriggeredCount = triggered.Count()
             });
             await _context.SaveChangesAsync();
-
-            var triggered = await GetTriggeredRules();
 
             await ProcessRules(triggered);
         }

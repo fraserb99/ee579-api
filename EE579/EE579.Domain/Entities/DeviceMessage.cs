@@ -11,5 +11,6 @@ namespace EE579.Domain.Entities
         public string DeviceId { get; set; }
         public string MessageBody { get; set; }
         public DateTime TimeStamp { get; set; }
+        public int TriggeredCount { get; set; }
     }
 }
