@@ -30,7 +30,7 @@ namespace EE579.Core.Slices.Rules.Mapping
                 return context.Mapper.Map(source, existing);
 
             var mapper = context.Mapper;
-            return source.Type switch
+            return source.OutputType switch
                 {
                     OutputType.BuzzerBeep => mapper.Map<BuzzerBeepOutput>(source),
                     OutputType.BuzzerOff => mapper.Map<BuzzerOffOutput>(source),

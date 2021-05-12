@@ -43,7 +43,7 @@ namespace EE579.Api.Examples
                             DeviceState = DeviceState.Claimed,
                             Name = "Ross' Msp430"
                         },
-                        Type = OutputType.BuzzerOn,
+                        OutputType = OutputType.BuzzerOn,
                         Duration = 5000
                     },
                     new LedPeriodOutputDto()
@@ -56,7 +56,7 @@ namespace EE579.Api.Examples
                         },
                         Peripheral = LedPeripheral.Led3,
                         Colour = LedColour.Green,
-                        Type = OutputType.LedBlink,
+                        OutputType = OutputType.LedBlink,
                         Period = 500
                     }
                 }
@@ -100,7 +100,7 @@ namespace EE579.Api.Examples
                                     DeviceState = DeviceState.Claimed,
                                     Name = "Ross' Msp430"
                                 },
-                                Type = OutputType.BuzzerOn,
+                                OutputType = OutputType.BuzzerOn,
                                 Duration = 5000
                             },
                             new LedPeriodOutputDto()
@@ -113,7 +113,7 @@ namespace EE579.Api.Examples
                                 },
                                 Peripheral = LedPeripheral.Led3,
                                 Colour = LedColour.Green,
-                                Type = OutputType.LedBlink,
+                                OutputType = OutputType.LedBlink,
                                 Period = 500
                             }
                         }
