@@ -11,6 +11,7 @@ using EE579.Core.Slices.Devices;
 using EE579.Core.Slices.Devices.Models;
 using EE579.Core.Slices.IotHub;
 using EE579.Core.Slices.IotHub.Impl;
+using EE579.Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,10 +29,12 @@ namespace EE579.Api.Controllers
     {
         private readonly IDeviceService _deviceService;
         private readonly IMapper _mapper;
-        public DevicesController(IDeviceService deviceService, IMapper mapper)
+        private readonly DatabaseContext _context;
+        public DevicesController(IDeviceService deviceService, IMapper mapper, DatabaseContext context)
         {
             _deviceService = deviceService;
             _mapper = mapper;
+            _context = context;
         }
 
         /// <remarks>
@@ -150,6 +153,15 @@ namespace EE579.Api.Controllers
         {
             await IotMessagingService.SendMessage("00:0a:95:9d:68:16", new Dictionary<string, string>(), "dk");
             return Ok();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("messages")]
+        public async Task<IActionResult> GetDeviceMessages()
+        {
+            var messages = _context.DeviceMessages.OrderByDescending(x => x.TimeStamp).Take(100);
+            return Ok(_mapper.Map<List<DeviceMessageDto>>(messages));
         }
     }
 }

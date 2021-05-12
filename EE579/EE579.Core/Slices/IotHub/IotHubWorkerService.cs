@@ -12,6 +12,7 @@ using Azure.Storage.Blobs;
 using EE579.Core.Slices.IotHub.Models;
 using EE579.Core.Slices.Rules.Processing;
 using EE579.Domain;
+using EE579.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -106,6 +107,16 @@ namespace EE579.Core.Slices.IotHub
                 await using var ruleProcessor = RuleProcessorFactory.CreateRuleProcessor(args, _configuration);
                 if (ruleProcessor == null)
                 {
+                    await using var context = GetContext(_configuration);
+                    await context.AddAsync(new DeviceMessage
+                    {
+                        DeviceId = args.GetDeviceId(),
+                        MessageBody = args.Data.EventBody.ToString(),
+                        TimeStamp = DateTime.Parse(args.Data.SystemProperties.GetValueOrDefault("iothub-enqueuedtime").ToString()),
+                        TriggeredCount = 0
+                    });
+                    await context.SaveChangesAsync();
+
                     args.UpdateCheckpointAsync();
                     return;
                 }
@@ -117,6 +128,17 @@ namespace EE579.Core.Slices.IotHub
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        private DatabaseContext GetContext(IConfiguration configuration)
+        {
+            var contextBuilder = new DbContextOptionsBuilder<DatabaseContext>();
+            contextBuilder
+                .UseLazyLoadingProxies()
+                .UseSqlServer(configuration.GetConnectionString("Default"));
+            var context = new DatabaseContext(contextBuilder.Options, new HttpContextAccessor());
+
+            return context;
         }
 
         private async Task ProcessErrorHandler(ProcessErrorEventArgs args)

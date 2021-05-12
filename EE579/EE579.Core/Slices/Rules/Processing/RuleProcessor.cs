@@ -42,12 +42,17 @@ namespace EE579.Core.Slices.Rules.Processing
 
         public async Task ProcessInput()
         {
+            var jsonOpts = new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() }
+            };
+
             var triggered = await GetTriggeredRules();
 
             await _context.AddAsync(new DeviceMessage
             {
                 DeviceId = _args.GetDeviceId(),
-                MessageBody = JsonSerializer.Serialize(GetMessageBody()),
+                MessageBody = JsonSerializer.Serialize(GetMessageBody(), jsonOpts),
                 TimeStamp = DateTime.Now,
                 TriggeredCount = triggered.Count()
             });

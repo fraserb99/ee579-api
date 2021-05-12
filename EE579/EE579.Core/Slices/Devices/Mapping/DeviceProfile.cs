@@ -26,6 +26,7 @@ namespace EE579.Core.Slices.Devices.Mapping
                 .AfterMap<WebHookUrlAfterMap>();
                 
             CreateMap<DeviceInput, Device>();
+            CreateMap<DeviceMessage, DeviceMessageDto>();
         }
     }
 }
