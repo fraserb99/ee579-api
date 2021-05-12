@@ -52,7 +52,7 @@ namespace EE579.Core.Slices.Rules.Processing
             await _context.AddAsync(new DeviceMessage
             {
                 DeviceId = _args.GetDeviceId(),
-                MessageBody = JsonSerializer.Serialize(GetMessageBody(), jsonOpts),
+                MessageBody = _args.Data.EventBody.ToString(),
                 TimeStamp = DateTime.Now,
                 TriggeredCount = triggered.Count()
             });
