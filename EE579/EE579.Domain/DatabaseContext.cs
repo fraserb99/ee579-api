@@ -58,6 +58,7 @@ namespace EE579.Domain
         public virtual DbSet<LedCycleOutput> LedCycleOutputs { get; set; }
         public virtual DbSet<LedFadeOutput> LedFadeOutputs { get; set; }
         public virtual DbSet<LedOutput> LedOutputs { get; set; }
+        public virtual DbSet<WebhookOutput> WebhookOutputs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

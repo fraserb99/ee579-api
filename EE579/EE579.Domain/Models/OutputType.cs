@@ -9,6 +9,7 @@
         LedCycle,
         BuzzerOn,
         BuzzerBeep,
-        BuzzerOff
+        BuzzerOff,
+        Webhook
     }
 }

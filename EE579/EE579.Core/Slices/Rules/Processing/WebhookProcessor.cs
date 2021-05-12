@@ -19,11 +19,13 @@ namespace EE579.Core.Slices.Rules.Processing
     {
         protected readonly DatabaseContext _context;
         private readonly string _code;
+        protected readonly HttpContext _httpContext;
 
-        public WebhookProcessor(IConfiguration configuration, string code)
+        public WebhookProcessor(IConfiguration configuration, string code, HttpContext httpContext)
         {
             _context = GetContext(configuration);
             _code = code;
+            _httpContext = httpContext;
         }
 
         private DatabaseContext GetContext(IConfiguration configuration)
@@ -54,7 +56,7 @@ namespace EE579.Core.Slices.Rules.Processing
                 foreach (var ruleOutput in rule.Outputs)
                 {
                     await throttler.WaitAsync();
-                    allTasks.Add(ruleOutput.SendOutputMessage());
+                    allTasks.Add(ruleOutput.SendOutputMessage(_httpContext.Request.ReadFromJsonAsync<object>(), _httpContext));
                 }
                 await throttler.WaitAsync();
             }

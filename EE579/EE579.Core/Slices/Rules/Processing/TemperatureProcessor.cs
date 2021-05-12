@@ -15,7 +15,7 @@ namespace EE579.Core.Slices.Rules.Processing
     public class TemperatureProcessor : RuleProcessor<TemperatureInput, AnalogueValueBody>
     {
         public TemperatureProcessor(ProcessEventArgs args, IConfiguration configuration)
-            : base(args, configuration) { }
+            : base(args, configuration, null) { }
 
         protected override async Task<IEnumerable<Rule>> GetTriggeredCore(IQueryable<TemperatureInput> rules)
         {

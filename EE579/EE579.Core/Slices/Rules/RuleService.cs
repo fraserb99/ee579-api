@@ -29,12 +29,12 @@ namespace EE579.Core.Slices.Rules
             var devices = rule.Inputs.Select(x => x.Device);
             foreach (var device in devices)
             {
-                device.NotifyOfInputs();
+                device?.NotifyOfInputs();
             }
             var devicesRemoved = oldDevices.Except(devices);
             foreach (var device in devicesRemoved)
             {
-                device.NotifyOfInputs();
+                device?.NotifyOfInputs();
             }
             return rule;
         }
@@ -44,7 +44,7 @@ namespace EE579.Core.Slices.Rules
             var devices = rule.Inputs.Select(x => x.Device);
             foreach (var device in devices)
             {
-                device.NotifyOfInputs();
+                device?.NotifyOfInputs();
             }
             
             return rule;
@@ -61,7 +61,7 @@ namespace EE579.Core.Slices.Rules
             var devices = entity.Inputs.Select(x => x.Device);
             foreach (var device in devices)
             {
-                device.NotifyOfInputs();
+                device?.NotifyOfInputs();
             }
             Repository.Remove(entity);
             await Repository.SaveChangesAsync();

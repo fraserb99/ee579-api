@@ -53,6 +53,7 @@ namespace EE579.Core.Slices.Rules.Mapping
             CreateMap<LedPeriodOutputDto, LedBlinkOutput>();
             CreateMap<LedPeriodOutputDto, LedBreatheOutput>();
             CreateMap<LedPeriodOutputDto, LedFadeOutput>();
+            CreateMap<WebhookOutputDto, WebhookOutput>();
 
             CreateMap<RuleInput, RuleInputDto>()
                 .ConvertUsing<RuleInputDtoConverter>();
@@ -73,6 +74,7 @@ namespace EE579.Core.Slices.Rules.Mapping
             CreateMap<LedBlinkOutput, LedPeriodOutputDto>();
             CreateMap<LedBreatheOutput, LedPeriodOutputDto>();
             CreateMap<LedFadeOutput, LedPeriodOutputDto>();
+            CreateMap<WebhookOutput, WebhookOutputDto>();
         }
     }
 }

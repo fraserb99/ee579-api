@@ -16,7 +16,7 @@ namespace EE579.Core.Slices.Rules.Processing
     public class SwitchFlippedProcessor : RuleProcessor<SwitchInput, SwitchFlippedBody>
     {
         public SwitchFlippedProcessor(ProcessEventArgs args, IConfiguration configuration) 
-            : base(args, configuration) { }
+            : base(args, configuration, null) { }
 
         protected override async Task<IEnumerable<Rule>> GetTriggeredCore(IQueryable<SwitchInput> rules)
         {

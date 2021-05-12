@@ -7,6 +7,7 @@ using EE579.Core.Slices.IotHub.Impl;
 using EE579.Core.Slices.IotHub.Messages;
 using EE579.Core.Slices.IotHub.Models;
 using EE579.Domain.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace EE579.Domain.Entities
 {
@@ -21,7 +22,7 @@ namespace EE579.Domain.Entities
         [Required]
         public OutputType Type { get; set; }
 
-        public Task SendOutputMessage()
+        public virtual Task SendOutputMessage(object messageBody = null, HttpContext httpContext = null)
         {
             var message = BuildMessage();
 

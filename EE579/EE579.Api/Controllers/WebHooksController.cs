@@ -54,7 +54,7 @@ namespace EE579.Api.Controllers
         [Route("trigger/{code}")]
         public async Task<IActionResult> Trigger(string code)
         {
-            var processor = new WebhookProcessor(_config, code);
+            var processor = new WebhookProcessor(_config, code, HttpContext);
 
             await processor.ProcessInput();
 

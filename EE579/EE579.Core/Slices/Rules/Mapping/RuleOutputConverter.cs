@@ -27,7 +27,7 @@ namespace EE579.Core.Slices.Rules.Mapping
         {
             var existing = _context.RuleOutputs.Find(source.Id);
             if (existing != null)
-                return context.Mapper.Map(source, destination);
+                return context.Mapper.Map(source, existing);
 
             var mapper = context.Mapper;
             return source.Type switch
@@ -40,6 +40,7 @@ namespace EE579.Core.Slices.Rules.Mapping
                     OutputType.LedCycle => mapper.Map<LedCycleOutput>(source),
                     OutputType.LedFade => mapper.Map<LedFadeOutput>(source),
                     OutputType.LedOutput => mapper.Map<LedOutput>(source),
+                    OutputType.Webhook => mapper.Map<WebhookOutput>(source),
                     _ => null,
                 };
         }
@@ -67,6 +68,7 @@ namespace EE579.Core.Slices.Rules.Mapping
                 OutputType.LedCycle => mapper.Map<LedCycleOutputDto>(source),
                 OutputType.LedFade => mapper.Map<LedPeriodOutputDto>(source),
                 OutputType.LedOutput => mapper.Map<LedOutputDto>(source),
+                OutputType.Webhook => mapper.Map<WebhookOutputDto>(source),
                 _ => null,
             };
         }

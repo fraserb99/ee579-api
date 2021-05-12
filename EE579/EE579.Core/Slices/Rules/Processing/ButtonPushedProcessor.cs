@@ -8,6 +8,7 @@ using EE579.Core.Slices.Rules.Processing.Models;
 using EE579.Domain.Entities;
 using EE579.Domain.Entities.Inputs;
 using EE579.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -16,7 +17,7 @@ namespace EE579.Core.Slices.Rules.Processing
     public class ButtonPushedProcessor : RuleProcessor<ButtonPushedInput, ButtonPushedBody>
     {
         public ButtonPushedProcessor(ProcessEventArgs args, IConfiguration configuration) 
-            : base(args, configuration) { }
+            : base(args, configuration, null) { }
 
         protected override async Task<IEnumerable<Rule>> GetTriggeredCore(IQueryable<ButtonPushedInput> rules)
         {

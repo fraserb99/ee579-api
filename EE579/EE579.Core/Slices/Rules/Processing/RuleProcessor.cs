@@ -18,12 +18,14 @@ namespace EE579.Core.Slices.Rules.Processing
         protected readonly DatabaseContext _context;
         protected readonly ProcessEventArgs _args;
         protected readonly TMessageBody MessageBody;
+        protected readonly HttpContext _httpContext;
 
-        protected RuleProcessor(ProcessEventArgs args, IConfiguration configuration)
+        protected RuleProcessor(ProcessEventArgs args, IConfiguration configuration, HttpContext httpContext)
         {
             _context = GetContext(configuration);
             _args = args;
             MessageBody = GetMessageBody();
+            _httpContext = httpContext;
         }
 
         protected virtual TMessageBody GetMessageBody()
@@ -73,7 +75,7 @@ namespace EE579.Core.Slices.Rules.Processing
                 foreach (var ruleOutput in rule.Outputs)
                 {
                     await throttler.WaitAsync();
-                    allTasks.Add(ruleOutput.SendOutputMessage());
+                    allTasks.Add(ruleOutput.SendOutputMessage(GetMessageBody()));
                 }
                 await throttler.WaitAsync();
                 allTasks.Add(AddRuleTriggeredEvent(rule));

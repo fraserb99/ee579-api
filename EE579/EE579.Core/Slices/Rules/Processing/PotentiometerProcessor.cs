@@ -16,7 +16,7 @@ namespace EE579.Core.Slices.Rules.Processing
     public class PotentiometerProcessor : RuleProcessor<PotentiometerInput, AnalogueValueBody>
     {
         public PotentiometerProcessor(ProcessEventArgs args, IConfiguration configuration)
-            : base(args, configuration) { }
+            : base(args, configuration, null) { }
 
         protected override async Task<IEnumerable<Rule>> GetTriggeredCore(IQueryable<PotentiometerInput> rules)
         {

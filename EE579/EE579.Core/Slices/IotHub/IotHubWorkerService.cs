@@ -135,7 +135,7 @@ namespace EE579.Core.Slices.IotHub
 
             if (message.eventType == "Microsoft.Devices.DeviceConnected")
             {
-                device.NotifyOfInputs();
+                device?.NotifyOfInputs();
                 if (device.LastConnectionTime < message.eventTime)
                 {
                     device.LastConnectionTime = message.eventTime;
