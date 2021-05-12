@@ -22,6 +22,12 @@ namespace EE579.Core.Slices.IotHub
 {
     public class IotHubWorkerService : BackgroundService
     {
+#if DEBUG
+        private const string consumerGroup = "local";
+#else
+        private const string consumerGroup = "cloud";
+#endif
+
         private const string storageConnectionString =
             "DefaultEndpointsProtocol=https;AccountName=ee579;AccountKey=WqI+aE+oDEDPFQ40kASEZQsJjTHaS6hLrbI4KxKG8Pu2hf2Xlaanh5nsuLNT09Q54pn7xBpYQIhBeJ6e5xpEvw==;EndpointSuffix=core.windows.net";
 
@@ -46,7 +52,7 @@ namespace EE579.Core.Slices.IotHub
 
             _eventProcessor = new EventProcessorClient(
                 storageClient,
-                EventHubConsumerClient.DefaultConsumerGroupName,
+                "local",
                 eventHubConnString,
                 eventHubName);
 
