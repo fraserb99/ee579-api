@@ -58,7 +58,7 @@ namespace EE579.Core.Slices.Rules.Mapping
         public RuleOutputDto Convert(RuleOutput source, RuleOutputDto destination, ResolutionContext context)
         {
             var mapper = context.Mapper;
-            return source.Type switch
+            return source.OutputType switch
             {
                 OutputType.BuzzerBeep => mapper.Map<BuzzerBeepOutputDto>(source),
                 OutputType.BuzzerOff => mapper.Map<BuzzerOffOutputDto>(source),

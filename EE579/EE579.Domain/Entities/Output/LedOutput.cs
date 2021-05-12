@@ -18,7 +18,7 @@ namespace EE579.Domain.Entities.Output
 
         protected override CloudToDeviceMessage CreateMessageCore()
         {
-            return new OutputMessage(Type, Peripheral);
+            return new OutputMessage(OutputType, Peripheral);
         }
 
         protected override object BuildMessageBody()
