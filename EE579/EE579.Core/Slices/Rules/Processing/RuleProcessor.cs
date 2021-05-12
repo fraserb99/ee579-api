@@ -53,7 +53,7 @@ namespace EE579.Core.Slices.Rules.Processing
             {
                 DeviceId = _args.GetDeviceId(),
                 MessageBody = _args.Data.EventBody.ToString(),
-                TimeStamp = DateTime.Now,
+                TimeStamp = DateTime.Parse(_args.Data.SystemProperties.GetValueOrDefault("iothub-enqueuedtime").ToString()),
                 TriggeredCount = triggered.Count()
             });
             await _context.SaveChangesAsync();
