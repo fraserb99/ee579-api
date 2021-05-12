@@ -15,6 +15,7 @@ namespace EE579.Domain.Entities.Output
         public int Period { get; set; }
         public LedColour? Colour { get; set; }
         public LedPeripheral Peripheral { get; set; }
+        public bool Value { get; set; }
 
         protected override CloudToDeviceMessage CreateMessageCore()
         {
@@ -23,9 +24,9 @@ namespace EE579.Domain.Entities.Output
         protected override object BuildMessageBody()
         {
             if (Peripheral == LedPeripheral.Led3)
-                return new { Period, Colour };
+                return new { Period, Colour, Value };
 
-            return new { Period };
+            return new { Period, Value };
         }
     }
 }
