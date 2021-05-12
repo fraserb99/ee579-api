@@ -10,6 +10,6 @@ namespace EE579.Core.Slices.Rules.Processing.Models
     public class ButtonPushedBody
     {
         public ButtonPeripheral InputType { get; set; }
-        public int Duration { get; set; }
+        public int Value { get; set; }
     }
 }
