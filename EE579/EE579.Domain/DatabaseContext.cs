@@ -60,6 +60,8 @@ namespace EE579.Domain
         public virtual DbSet<LedOutput> LedOutputs { get; set; }
         public virtual DbSet<WebhookOutput> WebhookOutputs { get; set; }
 
+        public virtual DbSet<DeviceMessage> DeviceMessages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

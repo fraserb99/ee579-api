@@ -84,6 +84,26 @@ namespace EE579.Domain.Migrations
                     b.ToTable("DeviceGroups");
                 });
 
+            modelBuilder.Entity("EE579.Domain.Entities.DeviceMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DeviceId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageBody")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeviceMessages");
+                });
+
             modelBuilder.Entity("EE579.Domain.Entities.Event", b =>
                 {
                     b.Property<Guid>("Id")
@@ -184,14 +204,14 @@ namespace EE579.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("OutputType")
+                        .HasColumnType("int");
+
                     b.Property<Guid?>("RuleId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
