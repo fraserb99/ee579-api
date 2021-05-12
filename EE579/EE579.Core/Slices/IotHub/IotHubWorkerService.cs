@@ -52,7 +52,7 @@ namespace EE579.Core.Slices.IotHub
 
             _eventProcessor = new EventProcessorClient(
                 storageClient,
-                "local",
+                consumerGroup,
                 eventHubConnString,
                 eventHubName);
 
